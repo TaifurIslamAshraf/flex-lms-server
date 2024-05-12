@@ -1,7 +1,8 @@
 import httpStatus from "http-status";
 import { Schema, model } from "mongoose";
-import ApiError from "../../errors/ApiError";
+
 import { TAcademicSemester, TMonths, TSemesterCodes, TSemesterNames } from "./academicSemester.interface";
+import ApiError from "../../errorHandlers/ApiError";
 
 export const Months: TMonths[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 export const SemesterNames: TSemesterNames[] = ["Autumn", "Summer", "Fall"]

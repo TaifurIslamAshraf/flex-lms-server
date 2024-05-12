@@ -11,7 +11,6 @@ import morgan from "morgan";
 import path from "path";
 import requestIp from "request-ip";
 import config from "./app/config/config";
-import "./app/crons";
 import enableCrossOriginResourcePolicy from "./app/middlewares/enableCrossOriginResourcePolicy";
 import globalErrorhandler from "./app/middlewares/globalErrorHandler";
 import { notFoundRoute } from "./app/middlewares/notFoundRoute";

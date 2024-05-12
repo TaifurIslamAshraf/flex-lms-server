@@ -1,8 +1,9 @@
 
 import httpStatus from "http-status";
-import ApiError from "../../errors/ApiError";
+
 import { TAcademicSemester } from "./academicSemester.interface";
 import { AcademicSemesterModel } from "./academicSemester.model";
+import ApiError from "../../errorHandlers/ApiError";
 
 const createAcademicSemesterIntoDB = async (payload: TAcademicSemester) => {
     type TSemesterCodeMapper = {

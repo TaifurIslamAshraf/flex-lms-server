@@ -3,7 +3,7 @@ export type TUserLogin = {
     password: string;
 }
 
-export interface TPasswordData {
+export type TPasswordData = {
     oldPassword: string,
     newPassword: string;
 }

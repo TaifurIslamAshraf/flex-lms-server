@@ -1,11 +1,11 @@
 import httpStatus from "http-status";
 import mongoose from "mongoose";
-import QueryBuilder from '../../builder/QueryBuilder';
-import ApiError from "../../errors/ApiError";
 import { UserModel } from "../user/user.model";
 import { searchableFields } from './student.constant';
 import { TStudent } from './student.interface';
 import StudentModel from "./student.model";
+import QueryBuilder from "../../../helper/QueryBuilder";
+import ApiError from "../../../errorHandlers/ApiError";
 
 const getSingleStudentFromDB = async (_id: string) => {
     const result = await StudentModel.findById(_id).populate('admissionSemester').populate(['admissionSemester', 'user']).populate({
@@ -96,7 +96,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
     const result = await studentQuery.queryModel
     const meta = await studentQuery.countTotal()
-    console.log(meta)
+    // console.log(meta)
     return { meta, result }
 
 }
@@ -118,7 +118,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
         }
     }
 
-    console.log({ ...payload }, 'modifiedUpdatedData', modifiedUpdatedData)
+    // console.log({ ...payload }, 'modifiedUpdatedData', modifiedUpdatedData)
 
     const result = await StudentModel.findByIdAndUpdate(
         id,

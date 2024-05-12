@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { TGuardian, TStudent, TStudentModel, TUserName } from "./student.interface";
 // import { TGuardian, TStudent, TStudentMethods, TStudentModel, TUserName } from "./student.interface";
-import validator from "validator";
+// import validator from "validator";
 // import bcrypt from "bcrypt";
 // import config from "../../config/config";
 
@@ -26,10 +26,10 @@ const userNameSchema = new Schema<TUserName>(
             required: [true, 'Last Name is required!'],
             trim: true,
             maxlength: [20, 'First Name can not be longer than 20 character.'],
-            validate: {
-                validator: (value: string) => validator.isAlpha(value),
-                message: '{VALUE} is not valid.'
-            }
+            // validate: {
+            //     validator: (value: string) => validator.isAlpha(value),
+            //     message: '{VALUE} is not valid.'
+            // }
         }
     }
 )

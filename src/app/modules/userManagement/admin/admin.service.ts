@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
-import QueryBuilder from '../../builder/QueryBuilder';
-import ApiError from '../../errors/ApiError';
+
+
 import { UserModel } from '../user/user.model';
 import { AdminSearchableFields } from './admin.constant';
 import { TAdmin } from './admin.interface';
 import { Admin } from './admin.model';
+import QueryBuilder from '../../../helper/QueryBuilder';
+import ApiError from '../../../errorHandlers/ApiError';
 
 const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find(), query)

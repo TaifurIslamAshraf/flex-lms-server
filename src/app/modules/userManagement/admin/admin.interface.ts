@@ -34,6 +34,7 @@ export type TAdmin = {
   isDeleted: boolean;
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface AdminModel extends Model<TAdmin> {
   isUserExists(id: string): Promise<TAdmin | null>;
 }

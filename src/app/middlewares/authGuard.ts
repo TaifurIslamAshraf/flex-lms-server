@@ -1,10 +1,11 @@
 import httpStatus from "http-status";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config/config';
-import ApiError from "../errors/ApiError";
-import { TUserRole } from '../modules/user/user.interface';
-import { UserModel } from '../modules/user/user.model';
-import catchAsync from "../utils/catchAsync";
+import ApiError from "../errorHandlers/ApiError";
+import catchAsync from "../utilities/catchAsync";
+import { UserModel } from "../modules/userManagement/user/user.model";
+import { TUserRole } from "../modules/userManagement/user/user.interface";
+
 
 const authGuard = (...requiredRolls: TUserRole[]) => {
     return catchAsync(async (req, res, next) => {
@@ -14,7 +15,7 @@ const authGuard = (...requiredRolls: TUserRole[]) => {
             throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!")
         }
 
-        const decode = jwt.verify(token, config.jwt_secret as string) as JwtPayload
+        const decode = jwt.verify(token, config.token_data.access_token_secret as string) as JwtPayload
         const { userId, role, iat } = decode
         const user = await UserModel.isUserExistByCustomId(userId)
 
@@ -26,7 +27,7 @@ const authGuard = (...requiredRolls: TUserRole[]) => {
             throw new ApiError(httpStatus.FORBIDDEN, `This user is ${user.isDeleted && "deleted" || user.status}`)
         }
 
-        console.log(decode)
+        // console.log(decode)
         if (requiredRolls && !requiredRolls.includes(role)) {
             throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!")
         }
