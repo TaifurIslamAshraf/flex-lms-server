@@ -1,22 +1,22 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export type IComment = {
-  user: object;
+  user: Types.ObjectId;
   qustion: string;
   qustionReplies: IComment[];
-} & Document;
+};
 
 export type IReview = {
-  user: object;
+  user: Types.ObjectId;
   rating: number;
   comment: string;
   commentReplies?: [object];
-} & Document;
+};
 
-export type CourseResource = {
+export type IVideoResource = {
   title: string;
   url: string;
-} & Document;
+};
 
 export type ICourseData = {
   videoTitle: string;
@@ -25,28 +25,28 @@ export type ICourseData = {
   videoSection: string;
   videoLength: number;
   videoPlayer: string;
-
-  suggestion: string;
+  contentDrip: boolean;
+  videoResource?: string;
   qustions: IComment[];
-} & Document;
+};
 
 export type ICourse = {
+  instructor: Types.ObjectId;
   name: string;
   description: string;
   price: number;
   estimatedPrice?: number;
-  thumbnail: {
-    public_id: string;
-    url: string;
-  };
+  thumbnail: string;
   tags: string;
   level: string;
   demoUrl: string;
-  links: CourseResource[];
+
   benefits: {
     title: string;
   }[];
-  prerequistites: { title: string }[];
+  prerequistites?: { title: string }[];
+  courseDuration: string;
+  materialIncludes: string;
   reviews: IReview[];
   courseData: ICourseData[];
   rating?: number;

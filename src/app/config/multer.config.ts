@@ -1,5 +1,7 @@
 import fs from "fs";
-import multer from "multer";
+
+import { Request } from "express";
+import multer, { FileFilterCallback } from "multer";
 import path from "path";
 
 const storage = multer.diskStorage({
@@ -14,7 +16,7 @@ const storage = multer.diskStorage({
 const getUploadFolder = () => {
   // Create a unique folder name using a timestamp
   const timestamp = Date.now();
-  const uploadFolder = path.join("uploads/public", String(timestamp));
+  const uploadFolder = path.join("public/uploads", String(timestamp));
 
   // Create the folder if it doesn't exist
   if (!fs.existsSync(uploadFolder)) {
@@ -24,4 +26,28 @@ const getUploadFolder = () => {
   return uploadFolder;
 };
 
-export const upload = multer({ storage });
+//file filter
+const fileFilter = async (
+  req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback
+) => {
+  // Define acceptable file types
+  const acceptableTypes = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+
+  if (acceptableTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Unsupported file type"));
+  }
+};
+
+export const upload = multer({ storage, fileFilter: fileFilter });

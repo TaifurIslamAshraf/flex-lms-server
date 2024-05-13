@@ -1,10 +1,10 @@
 import { Model, Schema, model } from "mongoose";
 import {
-  CourseResource,
   IComment,
   ICourse,
   ICourseData,
   IReview,
+  IVideoResource,
 } from "./course.interface";
 
 const reviewSchema = new Schema<IReview>({
@@ -23,7 +23,7 @@ const reviewSchema = new Schema<IReview>({
   },
 });
 
-const CourseResource = new Schema<CourseResource>({
+const videoResource = new Schema<IVideoResource>({
   title: {
     type: String,
     required: true,
@@ -75,8 +75,12 @@ const courseDataSchema = new Schema<ICourseData>({
     required: true,
   },
 
-  suggestion: {
-    type: String,
+  videoResource: {
+    type: [videoResource],
+  },
+
+  contentDrip: {
+    type: Boolean,
     required: true,
   },
   qustions: {
@@ -86,9 +90,15 @@ const courseDataSchema = new Schema<ICourseData>({
 
 const courseSchema = new Schema<ICourse>(
   {
+    instructor: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -102,14 +112,8 @@ const courseSchema = new Schema<ICourse>(
       type: String,
     },
     thumbnail: {
-      public_id: {
-        type: String,
-        // required: true,
-      },
-      url: {
-        type: String,
-        // required: true,
-      },
+      type: String,
+      required: true,
     },
     tags: {
       type: String,
@@ -123,16 +127,21 @@ const courseSchema = new Schema<ICourse>(
       type: String,
       required: true,
     },
-    links: {
-      type: [CourseResource],
-      //   required: true,
-    },
+
     benefits: {
       type: [{ title: String }],
       required: true,
     },
     prerequistites: {
       type: [{ title: String }],
+      // required: true,
+    },
+    courseDuration: {
+      type: String,
+      required: true,
+    },
+    materialIncludes: {
+      type: String,
       required: true,
     },
     reviews: [reviewSchema],
