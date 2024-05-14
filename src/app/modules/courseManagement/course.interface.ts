@@ -33,6 +33,7 @@ export type ICourseData = {
 export type ICourse = {
   instructor: Types.ObjectId;
   name: string;
+  slug: string;
   description: string;
   price: number;
   estimatedPrice?: number;
