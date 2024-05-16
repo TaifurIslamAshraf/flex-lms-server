@@ -1,45 +1,61 @@
 import httpStatus from "http-status";
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../config/config';
+import { JwtPayload } from "jsonwebtoken";
+import config from "../config/config";
 import ApiError from "../errorHandlers/ApiError";
+import { UserModel } from "../modules/userManagement/user_demo/user.model";
 import catchAsync from "../utilities/catchAsync";
-import { UserModel } from "../modules/userManagement/user/user.model";
-import { TUserRole } from "../modules/userManagement/user/user.interface";
 
+import { NextFunction, Request, Response } from "express";
+import { verifyToken } from "../modules/userManagement/auth_demo/auth.utils";
 
-const authGuard = (...requiredRolls: TUserRole[]) => {
-    return catchAsync(async (req, res, next) => {
-        const token = req.headers.authorization?.split(' ')[1]
+export const isAuthenticated = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const refresh_token = req.cookies.refresh_token as string;
 
-        if (!token) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!")
-        }
+    if (!refresh_token) {
+      throw new ApiError(
+        httpStatus.UNAUTHORIZED,
+        "Please login to access this recourse"
+      );
+    }
+    const decoded = verifyToken(
+      refresh_token,
+      config.token_data.refresh_token_secret!
+    ) as JwtPayload;
 
-        const decode = jwt.verify(token, config.token_data.access_token_secret as string) as JwtPayload
-        const { userId, role, iat } = decode
-        const user = await UserModel.isUserExistByCustomId(userId)
+    if (!decoded) {
+      throw new ApiError(
+        httpStatus.UNAUTHORIZED,
+        "Invalid access token. please login"
+      );
+    }
 
-        if (!user) {
-            throw new ApiError(httpStatus.NOT_FOUND, "User not found!")
-        }
+    const user = await UserModel.findById(decoded._id);
 
-        if (user.isDeleted || user.status === "blocked") {
-            throw new ApiError(httpStatus.FORBIDDEN, `This user is ${user.isDeleted && "deleted" || user.status}`)
-        }
+    if (!user) {
+      throw new ApiError(
+        httpStatus.UNAUTHORIZED,
+        "Please login to access this recourse"
+      );
+    }
 
-        // console.log(decode)
-        if (requiredRolls && !requiredRolls.includes(role)) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!")
-        }
+    res.locals.user = user;
 
-        const passwordChangeTime = user.passwordChangeAt
-        if (passwordChangeTime && UserModel.isJwtIssuedAfterChangedPassword(passwordChangeTime, iat as number)) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!")
-        }
+    next();
+  }
+);
 
-        req.user = decode as JwtPayload
-        next()
-    })
-}
+export const authorizeUser = (...roles: string[]) => {
+  return catchAsync(async (req, res, next) => {
+    if (!roles.includes(res.locals.user.role)) {
+      throw new ApiError(
+        httpStatus.FORBIDDEN,
+        `${res.locals.user.role} is not allowed to access this recourse`
+      );
+    }
 
-export default authGuard
+    next();
+  });
+};
+
+export default { authorizeUser, isAuthenticated };

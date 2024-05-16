@@ -1,20 +1,28 @@
-import { Model } from "mongoose";
-import { USER_ROLL } from "./user.const";
+import { Document } from "mongoose";
 
-export type TUser = {
-    id: string,
-    email: string;
-    password: string,
-    needsPasswordChange: boolean;
-    passwordChangeAt?: Date;
-    role: "superAdmin" | "admin" | "student" | "faculty";
-    status: "in-progress" | "blocked";
-    isDeleted: boolean;
-}
+export type Iinstructor = {
+  title: string;
+  description: string;
+} & Document;
 
-export type TUserModel = {
-    isUserExistByCustomId(id: string): Promise<TUser>,
-    isJwtIssuedAfterChangedPassword(passwordChangeTime: Date, jwtIatTime: number): boolean
-} & Model<TUser>
+export type IUser = {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  role: "admin" | "user" | "instructor";
+  instructor?: Iinstructor;
+  avatar?: string;
+  address?: string;
+  fatherName?: string;
+  motherName?: string;
+  district?: string;
+  postCode?: string;
+} & Document;
 
-export type TUserRole = keyof typeof USER_ROLL
+export type IUserSubset = {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+};

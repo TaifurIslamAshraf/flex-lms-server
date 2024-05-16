@@ -20,7 +20,7 @@ const validateRequest =
     }
   };
 
-export const validate = (schema: AnySchema) => {
+export const validateRequestWithJoi = (schema: AnySchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const option = {
       abortEarly: false,

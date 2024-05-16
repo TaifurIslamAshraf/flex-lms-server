@@ -14,7 +14,7 @@ import config from "./app/config/config";
 import enableCrossOriginResourcePolicy from "./app/middlewares/enableCrossOriginResourcePolicy";
 import globalErrorhandler from "./app/middlewares/globalErrorHandler";
 import { notFoundRoute } from "./app/middlewares/notFoundRoute";
-import router from "./app/routes";
+// import router from "./app/routes";
 import sendResponse from "./app/utilities/sendResponse";
 const app: Application = express();
 
@@ -84,7 +84,7 @@ app.use("/api/v1", (req, res, next) => {
 });
 
 // api endpoints
-app.use("/api/v1", router);
+// app.use("/api/v1", router);
 
 // Global error handler
 app.use(globalErrorhandler);

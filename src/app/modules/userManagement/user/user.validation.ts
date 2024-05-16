@@ -1,21 +1,25 @@
-import { z } from "zod"
+import Joi from "joi";
 
-const userValidationSchema = z.object({
-    body: z.object({
-        password: z.string({
-            required_error: "Password is required",
-            invalid_type_error: "Password must be a string",
-        }).max(20, { message: 'Password can not be more than 20 characters' }).optional(),
-        // role: z.enum(["admin", "student", "faculty"]),
-        // status: z.enum(["in-progress", "blocked"]).default('in-progress'),
-        // isDeleted: z.boolean()
-    })
-})
+export const instructorSchema = Joi.object({
+  title: Joi.string().required(),
+  description: Joi.string().required(),
+});
 
-export const userStatusValidationSchema = z.object({
-    body: z.object({
-        status: z.enum(["in-progress", "blocked"])
-    })
-})
-
-export default userValidationSchema
+export const userSchema = Joi.object({
+  name: Joi.string().required(),
+  phone: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+  role: Joi.string().valid("admin", "user", "instructor").default("user"),
+  instructor: Joi.when("role", {
+    is: "instructor",
+    then: instructorSchema.optional(),
+    otherwise: instructorSchema.optional(),
+  }),
+  avatar: Joi.string().optional(),
+  address: Joi.string().optional(),
+  fatherName: Joi.string().optional(),
+  motherName: Joi.string().optional(),
+  district: Joi.string().optional(),
+  postCode: Joi.string().optional(),
+});
