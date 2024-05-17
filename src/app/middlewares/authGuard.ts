@@ -2,11 +2,11 @@ import httpStatus from "http-status";
 import { JwtPayload } from "jsonwebtoken";
 import config from "../config/config";
 import ApiError from "../errorHandlers/ApiError";
-import { UserModel } from "../modules/userManagement/user_demo/user.model";
+import UserModel from "../modules/userManagement/user/user.model";
 import catchAsync from "../utilities/catchAsync";
 
 import { NextFunction, Request, Response } from "express";
-import { verifyToken } from "../modules/userManagement/auth_demo/auth.utils";
+import { jwtHelper } from "../helper/jwt.helper";
 
 export const isAuthenticated = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +18,7 @@ export const isAuthenticated = catchAsync(
         "Please login to access this recourse"
       );
     }
-    const decoded = verifyToken(
+    const decoded = jwtHelper.verifyToken(
       refresh_token,
       config.token_data.refresh_token_secret!
     ) as JwtPayload;

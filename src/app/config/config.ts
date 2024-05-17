@@ -16,13 +16,7 @@ export default {
     access_token_secret: env.ACCESS_TOKEN_SECRET,
     refresh_token_secret: env.REFRESH_TOKEN_SECRET,
     access_token_expires: env.ACCESS_TOKEN_EXPIRES,
-    customer_refresh_token_expires: env.CUSTOMER_REFRESH_TOKEN_EXPIRES,
-    admin_staff_refresh_token_expires: env.ADMIN_STAFF_REFRESH_TOKEN_EXPIRES,
-    access_token_cookie_expires: env.ACCESS_TOKEN_COOKIE_EXPIRES,
-    customer_refresh_token_cookie_expires:
-      env.CUSTOMER_REFRESH_TOKEN_COOKIE_EXPIRES,
-    admin_staff_refresh_token_cookie_expires:
-      env.ADMIN_STAFF_REFRESH_TOKEN_COOKIE_EXPIRES,
+    refresh_token_expires: env.REFRESH_TOKEN_EXPIRES,
   },
   session_secret: env.SESSION_SECRET,
   session_expires: env.SESSION_EXPIRES,
