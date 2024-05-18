@@ -5,24 +5,24 @@ import { IUser } from "./auth.interface";
 
 //parse env value to inregate with falback value
 const accessTokenExpire = parseInt(
-  config.token_data.access_token_expires || "1",
+  config.token_data.access_token_cookie_expires || "1",
   10
 );
 const refreshTokenExpire = parseInt(
-  config.token_data.refresh_token_expires || "1",
+  config.token_data.refresh_token_cookie_expires || "1",
   10
 );
 
 //options for cookis
 export const accessTokenCookieOptions: CookieOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 60 * 1000),
+  expires: new Date(Date.now() + accessTokenExpire),
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict",
 };
 
 export const refreshTokenCookieOptions: CookieOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
+  expires: new Date(Date.now() + refreshTokenExpire),
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict",

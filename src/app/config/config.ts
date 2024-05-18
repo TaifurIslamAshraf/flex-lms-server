@@ -17,6 +17,8 @@ export default {
     refresh_token_secret: env.REFRESH_TOKEN_SECRET,
     access_token_expires: env.ACCESS_TOKEN_EXPIRES,
     refresh_token_expires: env.REFRESH_TOKEN_EXPIRES,
+    access_token_cookie_expires: env.ACCESS_TOKEN_COOKIE_EXPIRES,
+    refresh_token_cookie_expires: env.REFRESH_TOKEN_COOKIE_EXPIRES,
   },
   session_secret: env.SESSION_SECRET,
   session_expires: env.SESSION_EXPIRES,

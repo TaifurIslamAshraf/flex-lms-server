@@ -35,4 +35,11 @@ const loginService = async (payload: ILogin): Promise<IUser> => {
   return result;
 };
 
-export const authServices = { createUserIntodb, loginService };
+//user find by id
+const userFindById = async (id: string): Promise<IUser> => {
+  const result = await UserModel.findById(id);
+
+  return result;
+};
+
+export const authServices = { createUserIntodb, loginService, userFindById };
