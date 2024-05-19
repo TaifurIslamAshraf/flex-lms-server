@@ -70,3 +70,25 @@ export const updateUserInfo = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
   });
 });
+
+export const getAllUsers = catchAsync(async (req, res) => {
+  const result = await userService.getAllUserFromdb;
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "All user here",
+    data: result,
+  });
+});
+
+export const updateUserRole = catchAsync(async (req, res) => {
+  const { userId, role } = req.body;
+
+  const result = await userService.userRoleService(userId, role);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "User role update successfully",
+    data: result,
+  });
+});

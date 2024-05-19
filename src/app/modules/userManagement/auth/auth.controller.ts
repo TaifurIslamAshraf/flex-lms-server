@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { JwtPayload } from "jsonwebtoken";
+import mongoose from "mongoose";
 import config from "../../../config/config";
 import ApiError from "../../../errorHandlers/ApiError";
 import { jwtHelper } from "../../../helper/jwt.helper";
@@ -110,3 +111,70 @@ export const updateAccessToken = catchAsync(
     });
   }
 );
+
+//update passowrd
+export const updatePassword = catchAsync(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userId = res.locals.user._id;
+
+  const payload = {
+    oldPassword,
+    newPassword,
+  };
+
+  await authServices.updatePasswordService(payload, userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Password update successfully",
+  });
+});
+
+//forgot password
+export const forgotPassword = catchAsync(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
+  }
+
+  await authServices.forgotPasswordService(email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Check you email",
+  });
+});
+
+export const forgotPasswordLinkValidation = catchAsync(async (req, res) => {
+  const { userId, token } = req.params;
+  if (!userId || !token) {
+    res.status(400).send("<h1>Invalid Link. try again</h1>");
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    res.status(400).send("<h1>Invalid Link. try again</h1>");
+  }
+
+  const decoded = jwtHelper.verifyToken(
+    token,
+    config.token_data.forgotPasswordJwtSecret!
+  );
+  if (!decoded) {
+    res.status(400).send("<h1>Invalid Link. try again</h1>");
+  }
+
+  res.redirect(
+    `${config.clientSideURL?.split(",")[0]}/resetPassword/${userId}/${token}`
+  );
+});
+
+export const resetPassword = catchAsync(async (req, res) => {
+  const { newPassword, token, userId } = req.body;
+
+  await authServices.resetPasswordService({ newPassword, token, userId });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Reset password successfully. please login",
+  });
+});

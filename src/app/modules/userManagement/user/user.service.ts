@@ -53,10 +53,41 @@ const updateUserIntodb = async (payload: IUserUpdate, userId: string) => {
   const updatedUser = await UserModel.findByIdAndUpdate(
     userId,
     { $set: updateFields },
-    { new: true }
+    { new: true, runValidators: true }
   );
 
   return updatedUser;
 };
 
-export const userService = { updateUserAvatarIntodb, updateUserIntodb };
+const getAllUserFromdb = async () => {
+  const users = await UserModel.find().sort({ role: 1 });
+  const userLength = await UserModel.countDocuments();
+  if (!users) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Users not found");
+  }
+
+  return {
+    users,
+    userLength,
+  };
+};
+
+const userRoleService = async (userId: string, role: string) => {
+  const user = await UserModel.findByIdAndUpdate(
+    userId,
+    { role },
+    { new: true }
+  );
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  return user;
+};
+
+export const userService = {
+  updateUserAvatarIntodb,
+  updateUserIntodb,
+  getAllUserFromdb,
+  userRoleService,
+};

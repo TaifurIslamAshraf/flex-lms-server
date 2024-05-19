@@ -2,6 +2,7 @@ import compression from "compression";
 import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
+import ejs from "ejs";
 import express, { Application } from "express";
 import session, { SessionOptions } from "express-session";
 import userAgent from "express-useragent";
@@ -48,6 +49,7 @@ if (config.env === "production") {
 }
 
 // Middlewares
+app.set("view engine", ejs);
 app.use(session(sessionOptions));
 app.use(cors(corsOptions));
 app.use(helmet());

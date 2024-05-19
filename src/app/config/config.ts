@@ -10,6 +10,7 @@ export default {
   port: env.PORT,
   DBUrl: env.DB_URL,
   clientSideURL: env.CLIENT_SIDE_URL,
+  serverUrl: env.SERVER_URL,
   main_domain: env.MAIN_DOMAIN,
   bcrypt_salt_round: env.BCRYPT_SALT_ROUND,
   token_data: {
@@ -19,6 +20,14 @@ export default {
     refresh_token_expires: env.REFRESH_TOKEN_EXPIRES,
     access_token_cookie_expires: env.ACCESS_TOKEN_COOKIE_EXPIRES,
     refresh_token_cookie_expires: env.REFRESH_TOKEN_COOKIE_EXPIRES,
+    forgotPasswordJwtSecret: env.FORTGOT_PASSWORD_SECRET,
+  },
+  smtp: {
+    smtpMail: env.SMTP_MAIL,
+    smtpHost: env.SMTP_HOST,
+    smtpPort: env.SMTP_PORT,
+    smtpService: env.SMTP_SERVICE,
+    smtpPass: env.SMTP_PASS,
   },
   session_secret: env.SESSION_SECRET,
   session_expires: env.SESSION_EXPIRES,
