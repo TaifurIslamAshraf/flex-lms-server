@@ -41,7 +41,8 @@ export type ICourse = {
   tags: string;
   level: string;
   demoUrl: string;
-
+  category: Types.ObjectId;
+  subcategory: Types.ObjectId;
   benefits: {
     title: string;
   }[];

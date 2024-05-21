@@ -110,6 +110,17 @@ const courseSchema = new Schema<ICourse>(
       type: String,
       required: true,
     },
+    subcategory: {
+      type: Schema.Types.ObjectId,
+      ref: "SubCategory",
+      required: [true, "subCategory id is required"],
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: [true, "Category id is required"],
+    },
+
     price: {
       type: Number,
       required: true,
