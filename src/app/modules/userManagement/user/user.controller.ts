@@ -7,7 +7,7 @@ import { IUserUpdate } from "./user.interface";
 import { userService } from "./user.service";
 
 //get me
-export const getUserInfo = catchAsync(async (req, res) => {
+const getUserInfo = catchAsync(async (req, res) => {
   const userId = res.locals.user._id;
   const user = await authServices.userFindById(userId);
   if (!user) {
@@ -21,7 +21,7 @@ export const getUserInfo = catchAsync(async (req, res) => {
 });
 
 //update avatar
-export const updateUserAvatar = catchAsync(async (req, res) => {
+const updateUserAvatar = catchAsync(async (req, res) => {
   const userId = res.locals.user._id;
 
   const user = await userService.updateUserAvatarIntodb(req?.file, userId);
@@ -34,7 +34,7 @@ export const updateUserAvatar = catchAsync(async (req, res) => {
 });
 
 //update user info
-export const updateUserInfo = catchAsync(async (req, res) => {
+const updateUserInfo = catchAsync(async (req, res) => {
   const {
     name,
     phone,
@@ -71,9 +71,8 @@ export const updateUserInfo = catchAsync(async (req, res) => {
   });
 });
 
-export const getAllUsers = catchAsync(async (req, res) => {
-  const result = await userService.getAllUserFromdb;
-
+const getAllUsers = catchAsync(async (req, res) => {
+  const result = await userService.getAllUserFromdb();
   sendResponse(res, {
     statusCode: httpStatus.OK,
     message: "All user here",
@@ -81,7 +80,7 @@ export const getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
-export const updateUserRole = catchAsync(async (req, res) => {
+const updateUserRole = catchAsync(async (req, res) => {
   const { userId, role } = req.body;
 
   const result = await userService.userRoleService(userId, role);
@@ -92,3 +91,11 @@ export const updateUserRole = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+export const userControllers = {
+  getUserInfo,
+  updateUserAvatar,
+  updateUserInfo,
+  getAllUsers,
+  updateUserRole,
+};

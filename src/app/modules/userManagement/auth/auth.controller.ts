@@ -16,7 +16,7 @@ import {
 } from "./auth.utils";
 
 //register user
-export const registerUser = catchAsync(async (req: Request, res: Response) => {
+const registerUser = catchAsync(async (req: Request, res: Response) => {
   //get user data form body
   const { name, email, password, phone } = req.body as IUser;
 
@@ -37,16 +37,16 @@ export const registerUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 //login user
-export const loginUser = catchAsync(async (req: Request, res: Response) => {
+const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const result = await authServices.loginService({ email, password });
 
-  sendToken(result, 200, res);
+  sendToken(result!, 200, res);
 });
 
 //logout user
-export const logout = catchAsync(async (req: Request, res: Response) => {
+const logout = catchAsync(async (req: Request, res: Response) => {
   res.clearCookie("access_token");
   res.clearCookie("refresh_token");
 
@@ -57,63 +57,61 @@ export const logout = catchAsync(async (req: Request, res: Response) => {
 });
 
 //update access token
-export const updateAccessToken = catchAsync(
-  async (req: Request, res: Response) => {
-    const refresh_token = req.cookies.refresh_token as string;
+const updateAccessToken = catchAsync(async (req: Request, res: Response) => {
+  const refresh_token = req.cookies.refresh_token as string;
 
-    if (!refresh_token) {
-      throw new ApiError(
-        httpStatus.UNAUTHORIZED,
-        "Please login to access this recourse"
-      );
-    }
-
-    const decoded = jwtHelper.verifyToken(
-      refresh_token,
-      config.token_data.refresh_token_secret!
-    ) as JwtPayload;
-    if (!decoded) {
-      throw new ApiError(
-        httpStatus.UNAUTHORIZED,
-        "Please login to access this recourse"
-      );
-    }
-
-    const userId = decoded._id;
-
-    const user = await authServices.userFindById(userId);
-
-    if (!user) {
-      throw new ApiError(
-        httpStatus.UNAUTHORIZED,
-        "Please login to access this recourse"
-      );
-    }
-
-    const accessToken = jwtHelper.createToken(
-      { _id: userId },
-      config.token_data.access_token_secret!,
-      config.token_data.access_token_expires!
+  if (!refresh_token) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      "Please login to access this recourse"
     );
-    const refreshToken = jwtHelper.createToken(
-      { _id: userId },
-      config.token_data.refresh_token_secret!,
-      config.token_data.refresh_token_expires!
-    );
-
-    res.locals.user = user;
-    res.cookie("access_token", accessToken, accessTokenCookieOptions);
-    res.cookie("refresh_token", refreshToken, refreshTokenCookieOptions);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      data: accessToken,
-    });
   }
-);
+
+  const decoded = jwtHelper.verifyToken(
+    refresh_token,
+    config.token_data.refresh_token_secret!
+  ) as JwtPayload;
+  if (!decoded) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      "Please login to access this recourse"
+    );
+  }
+
+  const userId = decoded._id;
+
+  const user = await authServices.userFindById(userId);
+
+  if (!user) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      "Please login to access this recourse"
+    );
+  }
+
+  const accessToken = jwtHelper.createToken(
+    { _id: userId },
+    config.token_data.access_token_secret!,
+    config.token_data.access_token_expires!
+  );
+  const refreshToken = jwtHelper.createToken(
+    { _id: userId },
+    config.token_data.refresh_token_secret!,
+    config.token_data.refresh_token_expires!
+  );
+
+  res.locals.user = user;
+  res.cookie("access_token", accessToken, accessTokenCookieOptions);
+  res.cookie("refresh_token", refreshToken, refreshTokenCookieOptions);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    data: accessToken,
+  });
+});
 
 //update passowrd
-export const updatePassword = catchAsync(async (req, res) => {
+const updatePassword = catchAsync(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   const userId = res.locals.user._id;
 
@@ -131,7 +129,7 @@ export const updatePassword = catchAsync(async (req, res) => {
 });
 
 //forgot password
-export const forgotPassword = catchAsync(async (req, res) => {
+const forgotPassword = catchAsync(async (req, res) => {
   const { email } = req.body;
   if (!email) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
@@ -145,7 +143,7 @@ export const forgotPassword = catchAsync(async (req, res) => {
   });
 });
 
-export const forgotPasswordLinkValidation = catchAsync(async (req, res) => {
+const forgotPasswordLinkValidation = catchAsync(async (req, res) => {
   const { userId, token } = req.params;
   if (!userId || !token) {
     res.status(400).send("<h1>Invalid Link. try again</h1>");
@@ -168,7 +166,7 @@ export const forgotPasswordLinkValidation = catchAsync(async (req, res) => {
   );
 });
 
-export const resetPassword = catchAsync(async (req, res) => {
+const resetPassword = catchAsync(async (req, res) => {
   const { newPassword, token, userId } = req.body;
 
   await authServices.resetPasswordService({ newPassword, token, userId });
@@ -178,3 +176,14 @@ export const resetPassword = catchAsync(async (req, res) => {
     message: "Reset password successfully. please login",
   });
 });
+
+export const authControllers = {
+  registerUser,
+  loginUser,
+  logout,
+  updateAccessToken,
+  updatePassword,
+  forgotPassword,
+  forgotPasswordLinkValidation,
+  resetPassword,
+};

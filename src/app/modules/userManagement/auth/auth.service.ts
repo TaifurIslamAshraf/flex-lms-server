@@ -22,7 +22,7 @@ const createUserIntodb = async (payload: IUserSubset): Promise<IUser> => {
 };
 
 //login service
-const loginService = async (payload: ILogin): Promise<IUser> => {
+const loginService = async (payload: ILogin) => {
   const user = await UserModel.findOne({ email: payload.email }).select(
     "+password"
   );
@@ -65,7 +65,6 @@ const updatePasswordService = async (
 //forgot password service
 const forgotPasswordService = async (email: string) => {
   const user = await UserModel.findOne({ email });
-  const userId = user._id;
 
   if (!user) {
     throw new ApiError(
@@ -73,6 +72,8 @@ const forgotPasswordService = async (email: string) => {
       "You dont have account with this email"
     );
   }
+
+  const userId = user._id;
 
   const serverUrl = config.serverUrl;
 
@@ -82,7 +83,7 @@ const forgotPasswordService = async (email: string) => {
     "5m"
   );
 
-  const forgotPasswordLink = `${serverUrl}/api/v1/user/forgot-password-link-validation/${userId}/${forgotPasswordToken}`;
+  const forgotPasswordLink = `${serverUrl}/api/v1/auth/forgot-password-link-validation/${userId}/${forgotPasswordToken}`;
 
   await ejs.renderFile(path.join(__dirname, "../../../views/forgotMail.ejs"), {
     forgotPasswordLink,
@@ -109,12 +110,6 @@ const resetPasswordService = async (payload: {
       "You dont have account with this email"
     );
   }
-  if (user?.isSocialAuth) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "you are not to able update password"
-    );
-  }
 
   const decoded = jwtHelper.verifyToken(
     payload.token,
@@ -132,7 +127,7 @@ const resetPasswordService = async (payload: {
 };
 
 //user find by id
-const userFindById = async (id: string): Promise<IUser> => {
+const userFindById = async (id: string) => {
   const result = await UserModel.findById(id);
 
   return result;

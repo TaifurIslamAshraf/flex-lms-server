@@ -1,4 +1,5 @@
 import httpStatus from "http-status";
+import { merge } from "lodash";
 import ApiError from "../../../errorHandlers/ApiError";
 import { deleteFile } from "../../../helper/deleteFile";
 import { IUser } from "../auth/auth.interface";
@@ -10,7 +11,6 @@ const updateUserAvatarIntodb = async (
   userId: string
 ): Promise<IUser> => {
   const user = await UserModel.findById(userId);
-
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
@@ -50,11 +50,12 @@ const updateUserIntodb = async (payload: IUserUpdate, userId: string) => {
     {} as Record<string, unknown>
   );
 
-  const updatedUser = await UserModel.findByIdAndUpdate(
-    userId,
-    { $set: updateFields },
-    { new: true, runValidators: true }
-  );
+  // Merge the payload into the existing user data
+  const mergedUserData = merge(user.toObject(), updateFields);
+
+  const updatedUser = await UserModel.findByIdAndUpdate(userId, {
+    $set: mergedUserData,
+  });
 
   return updatedUser;
 };
@@ -66,10 +67,12 @@ const getAllUserFromdb = async () => {
     throw new ApiError(httpStatus.NOT_FOUND, "Users not found");
   }
 
-  return {
+  const result = {
     users,
     userLength,
   };
+
+  return result;
 };
 
 const userRoleService = async (userId: string, role: string) => {

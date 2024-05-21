@@ -2,16 +2,14 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose, { Schema } from "mongoose";
 import config from "../../../config/config";
-import { IUser, Iinstructor } from "./user.interface";
+import { IUser, Iinstructor } from "../auth/auth.interface";
 
 const instructorSchema = new Schema<Iinstructor>({
   title: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
   },
 });
 
