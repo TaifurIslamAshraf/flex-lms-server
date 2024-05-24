@@ -39,7 +39,7 @@ export type ICourse = {
   estimatedPrice?: number;
   thumbnail: string;
   tags: string;
-  level: string;
+  level: "beginner" | "intermediate" | "expert";
   demoUrl: string;
   category: Types.ObjectId;
   subcategory: Types.ObjectId;
@@ -48,9 +48,14 @@ export type ICourse = {
   }[];
   prerequistites?: { title: string }[];
   courseDuration: string;
-  materialIncludes: string;
+  materialIncludes: string[];
   reviews: IReview[];
   courseData: ICourseData[];
   rating?: number;
   purchased?: number;
 } & Document;
+
+export type MulterFiles = {
+  thumbnail?: Express.Multer.File[];
+  materialIncludes?: Express.Multer.File[];
+};

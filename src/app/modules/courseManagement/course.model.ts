@@ -81,7 +81,7 @@ const courseDataSchema = new Schema<ICourseData>({
 
   contentDrip: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   qustions: {
     type: [commentSchema],
@@ -126,7 +126,7 @@ const courseSchema = new Schema<ICourse>(
       required: true,
     },
     estimatedPrice: {
-      type: String,
+      type: Number,
     },
     thumbnail: {
       type: String,
@@ -138,6 +138,7 @@ const courseSchema = new Schema<ICourse>(
     },
     level: {
       type: String,
+      enum: ["beginner", "intermediate", "expert"],
       required: true,
     },
     demoUrl: {
@@ -158,8 +159,7 @@ const courseSchema = new Schema<ICourse>(
       required: true,
     },
     materialIncludes: {
-      type: String,
-      required: true,
+      type: [String],
     },
     reviews: [reviewSchema],
     courseData: [courseDataSchema],
@@ -174,6 +174,21 @@ const courseSchema = new Schema<ICourse>(
   },
   {
     timestamps: true,
+  }
+);
+
+courseSchema.index(
+  {
+    name: "text",
+    description: "text",
+    slug: "text",
+  },
+  {
+    weights: {
+      name: 5,
+      description: 4,
+      slug: 5,
+    },
   }
 );
 

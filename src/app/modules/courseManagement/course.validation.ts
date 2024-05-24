@@ -19,7 +19,7 @@ const courseDataSchema = Joi.object({
   videoLength: Joi.number().required(),
   videoPlayer: Joi.string().required(),
   videoResource: Joi.array().items(videoResourceSchema),
-  contentDrip: Joi.boolean().required(),
+  contentDrip: Joi.boolean(),
   qustions: Joi.array().items(commentSchema),
 });
 
@@ -30,15 +30,15 @@ const reviewSchema = Joi.object({
   commentReplies: Joi.array().items(Joi.object()), // Assuming object structure
 });
 
-const courseSchema = Joi.object({
+const createCourse = Joi.object({
   instructor: Joi.string().required(), // Assuming user ID is a string
   name: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().required(),
-  estimatedPrice: Joi.string(),
+  estimatedPrice: Joi.number(),
 
   tags: Joi.string().required(),
-  level: Joi.string().required(),
+  level: Joi.string().valid("beginner", "intermediate", "expert").required(),
   demoUrl: Joi.string().required(),
 
   benefits: Joi.array()
@@ -46,11 +46,12 @@ const courseSchema = Joi.object({
     .required(),
   prerequistites: Joi.array().items(Joi.object({ title: Joi.string() })),
   courseDuration: Joi.string().required(),
-  materialIncludes: Joi.string().required(),
   reviews: Joi.array().items(reviewSchema),
   courseData: Joi.array().items(courseDataSchema),
   rating: Joi.number().default(0),
   purchased: Joi.number().default(0),
+  category: Joi.string().required(),
+  subcategory: Joi.string().required(),
 });
 
-export = { courseSchema };
+export const courseValidationSchema = { createCourse };

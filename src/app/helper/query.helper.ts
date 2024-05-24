@@ -1,4 +1,4 @@
-import { FilterQuery, Query, Aggregate } from "mongoose";
+import { Aggregate, FilterQuery, Model, PipelineStage, Query } from "mongoose";
 
 export class QueryHelper<T> {
   model: Query<T[], T>;
@@ -71,31 +71,27 @@ export class QueryHelper<T> {
 export class AggregateQueryHelper<T> {
   model: Aggregate<T[]>;
   query: Record<string, unknown>;
+  mongooseModel: Model<T>;
 
-  constructor(model: Aggregate<T[]>, query: Record<string, unknown>) {
+  constructor(
+    model: Aggregate<T[]>,
+    query: Record<string, unknown>,
+    mongooseModel: Model<T>
+  ) {
     this.model = model;
     this.query = query;
+    this.mongooseModel = mongooseModel;
   }
-  search(searchFields: string[]): this {
-    //ex:["phoneNumber","orderId"]
+  search(): this {
     const search = this.query?.search;
     if (search) {
-      const searchConditions = searchFields.map((field) => ({
-        [field]: { $regex: new RegExp(search as string, "i") },
-      }));
       this.model = this.model.match({
-        $or: searchConditions,
+        $text: { $search: search as string },
       } as FilterQuery<T>);
     }
     return this;
   }
-  sort(): this {
-    const sort = this.query?.sort;
-    if (sort) {
-      this.model = this.model.sort((sort as string).split(",").join(" "));
-    }
-    return this;
-  }
+
   paginate(): this {
     const page = Number(this.query?.page) || 1;
     const limit = Number(this.query?.limit) || 10;
@@ -103,10 +99,72 @@ export class AggregateQueryHelper<T> {
     this.model = this.model.skip(skip).limit(limit);
     return this;
   }
-  metaData(total: number) {
+
+  filterByCategory(): this {
+    const category = this.query?.category;
+
+    if (category) {
+      this.model.match({ category });
+    }
+
+    return this;
+  }
+
+  filterBySubCategory(): this {
+    const subcategory = this.query?.subcategory;
+
+    if (subcategory) {
+      this.model.match({ subcategory });
+    }
+
+    return this;
+  }
+
+  filterByPrice(): this {
+    const price = this.query?.price;
+
+    if (price === "free") {
+      this.model.match({ price: 0 });
+    } else if (price === "paid") {
+      this.model.match({ price: { $gt: 0 } });
+    } else if (price === "offers") {
+      this.model.match({ estimatedPrice: { $gt: 0 } });
+    }
+
+    return this;
+  }
+
+  filterByLevel(): this {
+    const level = this.query?.level;
+
+    if (level) {
+      this.model.match({ level });
+    }
+
+    return this;
+  }
+
+  async metaData(): Promise<{
+    totalPage: number;
+    currentPage: number;
+    nextPage: number | null;
+    prevPage: number | null;
+  }> {
+    const pipeline = this.model.pipeline() as PipelineStage[];
+
+    const matchStage = pipeline.find(
+      (stage) => "$match" in stage
+    ) as PipelineStage.Match;
+
+    const filter = matchStage ? matchStage.$match : {};
+    const total = await this.mongooseModel.countDocuments(filter);
     const page = Number(this.query?.page) || 1;
     const limit = Number(this.query?.limit) || 10;
     const totalPage = Math.ceil(total / limit);
-    return { page, limit, total, totalPage };
+
+    const nextPage = page < totalPage ? page + 1 : null;
+    const prevPage = page > 1 ? page - 1 : null;
+
+    return { totalPage, currentPage: page, nextPage, prevPage };
   }
 }

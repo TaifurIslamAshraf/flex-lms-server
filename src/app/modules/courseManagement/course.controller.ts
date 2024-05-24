@@ -4,7 +4,7 @@ import { deleteFile } from "../../helper/deleteFile";
 import { slugify } from "../../helper/slugify";
 import catchAsync from "../../utilities/catchAsync";
 import sendResponse from "../../utilities/sendResponse";
-import { ICourse } from "./course.interface";
+import { ICourse, MulterFiles } from "./course.interface";
 import courseModel from "./course.model";
 import { courseServices } from "./course.service";
 
@@ -22,8 +22,9 @@ const createCourse = catchAsync(async (req, res) => {
     benefits,
     prerequistites,
     courseData,
-    materialIncludes,
     courseDuration,
+    category,
+    subcategory,
   } = req.body as ICourse;
 
   const coursePayload: Record<string, unknown> = {
@@ -38,46 +39,54 @@ const createCourse = catchAsync(async (req, res) => {
     benefits,
     prerequistites,
     courseData,
-    materialIncludes,
     courseDuration,
+    category,
+    subcategory,
   };
 
-  //generate slug
   coursePayload.slug = slugify(name);
 
-  if (!req.file) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "thumbnail Images are required!"
+  const files = req.files as MulterFiles;
+
+  if (!files || !files.thumbnail) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Thumbnail image is required!");
+  }
+
+  if (files.thumbnail) {
+    coursePayload.thumbnail = files.thumbnail[0].path;
+  }
+
+  if (files.materialIncludes) {
+    coursePayload.materialIncludes = files.materialIncludes.map(
+      (file) => file.path
     );
   }
 
   const nameisExitst = await courseModel.findOne({ name });
   if (nameisExitst) {
-    deleteFile(req.file.path);
+    if (files.thumbnail) {
+      deleteFile(files.thumbnail[0].path);
+    }
     throw new ApiError(httpStatus.BAD_REQUEST, "Course name should be unique");
-  }
-
-  if (req.files) {
-    coursePayload.thumbnail = req.file?.path;
   }
 
   const result = await courseServices.createCourseIntodb(coursePayload);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "course create was successfully",
+    message: "Course created successfully",
     data: result,
   });
 });
 
 //get all course
 const getAllCourse = catchAsync(async (req, res) => {
-  const result = await courseServices.getAllCourseFromdb();
+  const query = req.query;
+  const result = await courseServices.getAllCourseFromdb(query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "all course get was successfully",
+    message: "all course get successfully",
     data: result,
   });
 });
@@ -95,4 +104,13 @@ const getSingleCourse = catchAsync(async (req, res) => {
   });
 });
 
-export const courseController = { createCourse, getAllCourse, getSingleCourse };
+//update course
+// const updateCourse = catchAsync(async (req, res) => {
+//   const { id } = req.params;
+// });
+
+export const courseController = {
+  createCourse,
+  getAllCourse,
+  getSingleCourse,
+};
