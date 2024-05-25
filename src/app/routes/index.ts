@@ -4,6 +4,7 @@ import {
   subcategoryRoute,
 } from "../modules/category/category.route";
 import courseRoutes from "../modules/courseManagement/course.route";
+import orderRouter from "../modules/orders/order.route";
 import authRouter from "../modules/userManagement/auth/auth.route";
 import userRouter from "../modules/userManagement/user/user.route";
 
@@ -29,6 +30,10 @@ const moduleRoutes = [
   {
     path: "/course",
     route: courseRoutes,
+  },
+  {
+    path: "/order",
+    route: orderRouter,
   },
 ];
 

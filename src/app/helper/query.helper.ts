@@ -144,6 +144,16 @@ export class AggregateQueryHelper<T> {
     return this;
   }
 
+  filterByOrderStatus(): this {
+    const orderStatus = this.query?.orderStatus;
+
+    if (orderStatus) {
+      this.model.match({ orderStatus });
+    }
+
+    return this;
+  }
+
   async metaData(): Promise<{
     totalPage: number;
     currentPage: number;
