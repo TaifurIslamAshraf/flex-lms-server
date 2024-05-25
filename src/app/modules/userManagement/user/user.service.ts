@@ -53,9 +53,13 @@ const updateUserIntodb = async (payload: IUserUpdate, userId: string) => {
   // Merge the payload into the existing user data
   const mergedUserData = merge(user.toObject(), updateFields);
 
-  const updatedUser = await UserModel.findByIdAndUpdate(userId, {
-    $set: mergedUserData,
-  });
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    userId,
+    {
+      $set: mergedUserData,
+    },
+    { new: true, runValidators: true }
+  );
 
   return updatedUser;
 };

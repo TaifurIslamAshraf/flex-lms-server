@@ -26,3 +26,34 @@ export const deleteFile = async (filePath: string) => {
     });
   }
 };
+
+export const deleteMultipleFile = async (filePaths: string[]) => {
+  if (filePaths.length > 0) {
+    const unlinkPromises: Promise<void>[] = [];
+
+    filePaths.map((file) => {
+      const unlinkPromise = new Promise<void>((resolve) => {
+        const filePath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          file.replace(/\\/g, "/")
+        );
+        fs.unlink(filePath, (err) => {
+          if (err && err.code === "ENOENT") {
+            logger.error(`File not found ${file}`);
+          } else if (err) {
+            logger.error(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      unlinkPromises.push(unlinkPromise);
+    });
+
+    await Promise.all(unlinkPromises);
+  }
+};

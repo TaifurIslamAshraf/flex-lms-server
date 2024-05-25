@@ -104,13 +104,77 @@ const getSingleCourse = catchAsync(async (req, res) => {
   });
 });
 
-//update course
-// const updateCourse = catchAsync(async (req, res) => {
-//   const { id } = req.params;
-// });
+// update course
+const updateCourse = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const {
+    instructor,
+    name,
+    description,
+    price,
+    estimatedPrice,
+    tags,
+    level,
+    demoUrl,
+    benefits,
+    prerequistites,
+    courseData,
+    courseDuration,
+    category,
+    subcategory,
+  } = req.body as ICourse;
+
+  const coursePayload: Record<string, unknown> = {
+    instructor,
+    name,
+    description,
+    price,
+    estimatedPrice,
+    tags,
+    level,
+    demoUrl,
+    benefits,
+    prerequistites,
+    courseData,
+    courseDuration,
+    category,
+    subcategory,
+  };
+
+  if (name) {
+    coursePayload.slug = slugify(name);
+  }
+
+  const files = req.files as MulterFiles;
+
+  const result = await courseServices.updateCourseIntodb(
+    coursePayload,
+    id,
+    files
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "course updated successfully",
+    data: result,
+  });
+});
+
+const deleteCourse = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  await courseServices.deleteCourseFromdb(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Course deleted successfull",
+  });
+});
 
 export const courseController = {
   createCourse,
   getAllCourse,
   getSingleCourse,
+  updateCourse,
+  deleteCourse,
 };
