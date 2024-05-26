@@ -76,21 +76,40 @@ const syncCourseEngagement = async (
 
   // If the videosCompleted field is being updated, calculate the new progress
   if (payload.videosCompleted) {
-    const totalVideos = await courseModel
-      .findById(payload.course)
-      .select("courseData")
-      .lean();
-    const totalVideoCount = totalVideos?.courseData.length || 0;
+    const newUniqueVideos = payload.videosCompleted.filter(
+      (video) => !(courseEngagement?.videosCompleted || []).includes(video)
+    );
 
-    const completedVideoCount =
-      (courseEngagement.videosCompleted?.length || 0) + 1;
+    if (newUniqueVideos.length > 0) {
+      // Merge the existing videosCompleted with the new unique ones
+      const mergedVideosCompleted = [
+        ...(courseEngagement?.videosCompleted || []),
+        ...newUniqueVideos,
+      ];
 
-    payload.progress = (completedVideoCount / totalVideoCount) * 100;
+      // Update payload.videosCompleted with merged values
+      payload.videosCompleted = mergedVideosCompleted;
+
+      // Calculate the new progress
+      const totalVideos = await courseModel
+        .findById(payload.course)
+        .select("courseData")
+        .lean();
+      const totalVideoCount = totalVideos?.courseData.length || 0;
+
+      const completedVideoCount = mergedVideosCompleted.length;
+
+      payload.progress = (completedVideoCount / totalVideoCount) * 100;
+    } else {
+      // If no new unique videos, remove videosCompleted from payload
+      delete payload.videosCompleted;
+    }
   }
 
   const updatedCourseEngagement = await CourseEngagementModel.findByIdAndUpdate(
     courseEngagement?._id,
-    payload
+    payload,
+    { new: true, runValidators: true }
   );
 
   return updatedCourseEngagement;
