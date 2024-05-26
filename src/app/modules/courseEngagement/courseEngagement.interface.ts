@@ -14,3 +14,8 @@ export type ICreateCourseEngagement = {
   user: Types.ObjectId;
   course: Types.ObjectId[];
 };
+
+export type IPurchasedCourses = {
+  course: Types.ObjectId;
+  price: number;
+}[];
