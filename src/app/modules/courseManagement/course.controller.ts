@@ -107,6 +107,7 @@ const getSingleCourse = catchAsync(async (req, res) => {
 // update course
 const updateCourse = catchAsync(async (req, res) => {
   const { id } = req.params;
+
   const {
     instructor,
     name,

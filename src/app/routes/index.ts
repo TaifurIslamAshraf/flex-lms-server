@@ -3,6 +3,7 @@ import {
   categoryRoute,
   subcategoryRoute,
 } from "../modules/category/category.route";
+import courseEngagementRouter from "../modules/courseEngagement/courseEngagement.route";
 import courseRoutes from "../modules/courseManagement/course.route";
 import orderRouter from "../modules/orders/order.route";
 import authRouter from "../modules/userManagement/auth/auth.route";
@@ -34,6 +35,10 @@ const moduleRoutes = [
   {
     path: "/order",
     route: orderRouter,
+  },
+  {
+    path: "/course-engagement",
+    route: courseEngagementRouter,
   },
 ];
 

@@ -5,6 +5,7 @@ import ApiError from "../../errorHandlers/ApiError";
 import { deleteFile, deleteMultipleFile } from "../../helper/deleteFile";
 import { AggregateQueryHelper } from "../../helper/query.helper";
 import { logger } from "../../utilities/logger";
+import { courseEngagementServices } from "../courseEngagement/courseEngagement.service";
 import { MulterFiles } from "./course.interface";
 import courseModel from "./course.model";
 
@@ -121,6 +122,11 @@ const updateCourseIntodb = async (
       runValidators: true,
     }
   );
+
+  //sync with course engagement
+  if (updatedFields?.courseData) {
+    await courseEngagementServices.updateProgressForAllUsersInCourse(courseId);
+  }
 
   return updatedCourse;
 };

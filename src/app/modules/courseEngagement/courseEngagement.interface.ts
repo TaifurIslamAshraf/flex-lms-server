@@ -6,9 +6,17 @@ export type ICourseEngagement = {
   enrolledAt: Date;
   completed: boolean;
   progress: number;
-  videosCompleted: string[];
-  currentVideo: string | null;
+  videosCompleted?: string[];
+  currentVideo?: string | null;
 } & Document;
+
+export type ISyncCourseEngagement = {
+  course: string;
+  completed?: boolean;
+  progress?: number;
+  videosCompleted?: string[];
+  currentVideo?: string | null;
+};
 
 export type ICreateCourseEngagement = {
   user: Types.ObjectId;
