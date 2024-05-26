@@ -85,9 +85,10 @@ export class AggregateQueryHelper<T> {
   search(): this {
     const search = this.query?.search;
     if (search) {
-      this.model = this.model.match({
-        $text: { $search: search as string },
-      } as FilterQuery<T>);
+      this.model = this.mongooseModel.aggregate([
+        { $match: { $text: { $search: search as string } } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     }
     return this;
   }
