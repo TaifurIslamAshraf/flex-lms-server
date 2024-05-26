@@ -15,7 +15,17 @@ const createCourseIntodb = async (coursePayload: Record<string, unknown>) => {
 };
 
 const getAllCourseFromdb = async (query: Record<string, unknown>) => {
-  const aggregatePipeline = courseModel.aggregate();
+  //exclude spcific field
+  const aggregatePipeline = [
+    {
+      $project: {
+        "courseData.videoDescription": 0,
+        "courseData.videoUrl": 0,
+        "courseData.videoLength": 0,
+        "courseData.videoResource": 0,
+      },
+    },
+  ];
 
   if (query.category) {
     query.category = new mongoose.Types.ObjectId(query.category as string);
@@ -27,7 +37,7 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
   }
 
   const aggregateHelper = new AggregateQueryHelper(
-    aggregatePipeline,
+    courseModel.aggregate(aggregatePipeline),
     query,
     courseModel
   );
@@ -40,7 +50,7 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
     .filterByLevel()
     .paginate();
 
-  const data = await aggregateHelper.model;
+  const data = await aggregateHelper.model.exec();
   const meta = await aggregateHelper.metaData();
 
   return { data, meta };
