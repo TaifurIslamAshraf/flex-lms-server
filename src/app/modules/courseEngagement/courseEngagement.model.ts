@@ -33,9 +33,9 @@ const courseEngagementSchema = new Schema<ICourseEngagement>({
   },
 });
 
-const CourseEngagement: Model<ICourseEngagement> = model(
+const CourseEngagementModel: Model<ICourseEngagement> = model(
   "CourseEngagement",
   courseEngagementSchema
 );
 
-export default CourseEngagement;
+export default CourseEngagementModel;

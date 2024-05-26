@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
 import { AggregateQueryHelper } from "../../helper/query.helper";
+import { courseEngagementServices } from "../courseEngagement/courseEngagement.service";
 import { Order } from "./order.interface";
 import orderModel from "./order.model";
 
@@ -54,6 +55,17 @@ const updateOrderStatusFromdb = async (
   order.orderStatus = orderStatus;
 
   await order.save();
+
+  if (orderStatus === "Approved") {
+    const courseEngagementPayload = {
+      user: order.user,
+      course: order.items.map((item) => item.course),
+    };
+
+    await courseEngagementServices.createCourseEngagementIntodb(
+      courseEngagementPayload
+    );
+  }
 
   return order;
 };
