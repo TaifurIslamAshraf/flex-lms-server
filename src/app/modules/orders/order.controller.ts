@@ -9,6 +9,8 @@ const createOrder = catchAsync(async (req, res) => {
   const { accountNumber, accountType, items, transactionId } =
     req.body as IOrder;
 
+  const userId = res.locals?.user?._id;
+
   const payload: Order = {
     accountNumber,
     accountType,
@@ -17,7 +19,7 @@ const createOrder = catchAsync(async (req, res) => {
     user: res.locals.user?._id,
   };
 
-  const result = await orderServices.createOrderIntodb(payload);
+  const result = await orderServices.createOrderIntodb(payload, userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
