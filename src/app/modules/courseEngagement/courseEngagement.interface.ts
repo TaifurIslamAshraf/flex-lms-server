@@ -9,3 +9,8 @@ export type ICourseEngagement = {
   videosCompleted: string[];
   currentVideo: string | null;
 } & Document;
+
+export type ICreateCourseEngagement = {
+  user: Types.ObjectId;
+  course: Types.ObjectId[];
+};
