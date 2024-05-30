@@ -1,4 +1,5 @@
 import express from "express";
+import cartRouter from "../modules/cart/cart.route";
 import {
   categoryRoute,
   subcategoryRoute,
@@ -39,6 +40,10 @@ const moduleRoutes = [
   {
     path: "/course-engagement",
     route: courseEngagementRouter,
+  },
+  {
+    path: "/cart",
+    route: cartRouter,
   },
 ];
 

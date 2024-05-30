@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export type Iinstructor = {
   title: string;
@@ -18,6 +18,7 @@ export type IUser = {
   motherName?: string;
   district?: string;
   postCode?: string;
+  cartItems: Types.ObjectId[];
   comparePassword: (entredPassword: string) => Promise<boolean>;
   accessToken: () => string;
   refreshToken: () => string;

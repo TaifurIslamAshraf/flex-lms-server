@@ -34,6 +34,14 @@ const userSchema = new Schema<IUser>(
       minlength: [6, "Password Must be at least 6 characters"],
       select: false,
     },
+
+    cartItems: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
+
     role: {
       type: String,
       enum: ["admin", "user", "instructor"],
