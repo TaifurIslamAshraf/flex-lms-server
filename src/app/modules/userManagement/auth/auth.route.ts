@@ -5,6 +5,7 @@ import { authControllers } from "./auth.controller";
 import {
   loginSchema,
   resetPasswordSchema,
+  updatePasswordSchema,
   userSchema,
 } from "./auth.validation";
 
@@ -29,6 +30,8 @@ authRouter.get("/refresh", isAuthenticated, authControllers.updateAccessToken);
 authRouter.put(
   "/update-password",
   isAuthenticated,
+  validateRequestWithJoi(updatePasswordSchema),
+
   authControllers.updatePassword
 );
 
