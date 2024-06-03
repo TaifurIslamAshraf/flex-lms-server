@@ -1,4 +1,5 @@
 import httpStatus from "http-status";
+import { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
 import { slugify } from "../../helper/slugify";
 import { CategoryModel, SubCategoryModel } from "./category.model";
@@ -32,6 +33,7 @@ const getAllCategoryAndSubcategoryFromdb = async () => {
       },
     },
   ]);
+
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
   }
@@ -137,6 +139,89 @@ const getAllSubcategoryFromdb = async () => {
   return subcategory;
 };
 
+const getSubcategoryByCategoryFromdb = async (categoryId: string) => {
+  const categoryObjectId = Types.ObjectId.isValid(categoryId)
+    ? new Types.ObjectId(categoryId)
+    : null;
+
+  if (!categoryObjectId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid category ID format");
+  }
+
+  const category = await CategoryModel.aggregate([
+    {
+      $match: { _id: categoryObjectId }, // Match the specific category ID
+    },
+    {
+      $lookup: {
+        from: "subcategories",
+        localField: "_id",
+        foreignField: "category",
+        as: "subcategory",
+      },
+    },
+    {
+      $unwind: {
+        path: "$subcategory",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "courses",
+        let: { subcategoryId: "$subcategory._id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$subcategory", "$$subcategoryId"] } } },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              slug: 1,
+              thumbnail: 1,
+            },
+          },
+        ],
+        as: "subcategory.courses",
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        name: { $first: "$name" },
+        slug: { $first: "$slug" },
+        subcategory: {
+          $push: {
+            _id: "$subcategory._id",
+            name: "$subcategory.name",
+            slug: "$subcategory.slug",
+            courses: "$subcategory.courses",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        slug: 1,
+        subcategory: {
+          $filter: {
+            input: "$subcategory",
+            as: "subcategory",
+            cond: { $ne: ["$$subcategory._id", null] },
+          },
+        },
+      },
+    },
+  ]);
+
+  if (!category || category.length === 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
+  }
+
+  return category[0];
+};
+
 const getSingleSubcategoryFromdb = async (slug: string) => {
   const category = await SubCategoryModel.findOne({ slug: slug });
   if (!category) {
@@ -191,4 +276,5 @@ export const categoryService = {
   getSingleSubcategoryFromdb,
   updateSubcategoryInfodb,
   deleteSubcategoryFromdb,
+  getSubcategoryByCategoryFromdb,
 };

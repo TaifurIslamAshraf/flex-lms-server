@@ -62,6 +62,10 @@ subcategoryRoute.get(
   "/get-single-subcategory/:slug",
   categoryControllers.getSignleSubcategory
 );
+subcategoryRoute.get(
+  "/get-subcategory-by-category/:category",
+  categoryControllers.getSubcategoryByCategory
+);
 subcategoryRoute.put(
   "/update-subcategory",
   validateRequestWithJoi(updateCategorySchema),

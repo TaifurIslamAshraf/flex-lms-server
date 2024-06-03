@@ -112,6 +112,17 @@ const getSignleSubcategory = catchAsync(async (req, res) => {
   });
 });
 
+const getSubcategoryByCategory = catchAsync(async (req, res) => {
+  const { category } = req.params;
+
+  const result = await categoryService.getSubcategoryByCategoryFromdb(category);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    data: result,
+  });
+});
+
 const updateSubcategory = catchAsync(async (req, res) => {
   const { name, id } = req.body;
 
@@ -147,4 +158,5 @@ export const categoryControllers = {
   deleteCategory,
   deleteSubcategory,
   createSubcategory,
+  getSubcategoryByCategory,
 };
