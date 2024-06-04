@@ -29,6 +29,7 @@ courseRoutes.put(
 );
 
 courseRoutes.get("/all-courses", courseController.getAllCourse);
+courseRoutes.get("/random-courses", courseController.getRandomCourse);
 courseRoutes.get("/single-course/:slug", courseController.getSingleCourse);
 
 courseRoutes.delete(

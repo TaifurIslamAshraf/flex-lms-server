@@ -91,6 +91,17 @@ const getAllCourse = catchAsync(async (req, res) => {
   });
 });
 
+//get random course
+const getRandomCourse = catchAsync(async (req, res) => {
+  const courses = await courseServices.getRandomCourseFromdb();
+
+  sendResponse(res, {
+    message: "Random course get successfully",
+    statusCode: httpStatus.OK,
+    data: courses,
+  });
+});
+
 //get single course
 const getSingleCourse = catchAsync(async (req, res) => {
   const { slug } = req.params;
@@ -178,4 +189,5 @@ export const courseController = {
   getSingleCourse,
   updateCourse,
   deleteCourse,
+  getRandomCourse,
 };

@@ -20,10 +20,17 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
   const aggregatePipeline = [
     {
       $project: {
-        "courseData.videoDescription": 0,
-        "courseData.videoUrl": 0,
-        "courseData.videoLength": 0,
-        "courseData.videoResource": 0,
+        courseData: 0,
+        category: 0,
+        subcategory: 0,
+        tag: 0,
+        level: 0,
+        demoUrl: 0,
+        benefits: 0,
+        prerequistites: 0,
+        courseDuration: 0,
+        materialIncludes: 0,
+        purchased: 0,
       },
     },
   ];
@@ -55,6 +62,32 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
   const meta = await aggregateHelper.metaData();
 
   return { data, meta };
+};
+
+const getRandomCourseFromdb = async () => {
+  const aggregatePipeline = [
+    {
+      $sample: { size: 4 },
+    },
+    {
+      $project: {
+        courseData: 0,
+        category: 0,
+        subcategory: 0,
+        tag: 0,
+        level: 0,
+        demoUrl: 0,
+        benefits: 0,
+        prerequistites: 0,
+        courseDuration: 0,
+        materialIncludes: 0,
+        purchased: 0,
+      },
+    },
+  ];
+
+  const courses = await courseModel.aggregate(aggregatePipeline);
+  return courses;
 };
 
 const getSingleCourseFromdb = async (slug: string) => {
@@ -163,4 +196,5 @@ export const courseServices = {
   getSingleCourseFromdb,
   updateCourseIntodb,
   deleteCourseFromdb,
+  getRandomCourseFromdb,
 };
