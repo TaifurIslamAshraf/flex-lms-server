@@ -67,7 +67,7 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
 const getRandomCourseFromdb = async () => {
   const aggregatePipeline = [
     {
-      $sample: { size: 4 },
+      $sample: { size: 5 },
     },
     {
       $project: {
