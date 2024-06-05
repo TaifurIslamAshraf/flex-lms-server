@@ -101,6 +101,16 @@ const getRandomCourse = catchAsync(async (req, res) => {
     data: courses,
   });
 });
+//get random category course
+const getRandomCategoryCourse = catchAsync(async (req, res) => {
+  const courses = await courseServices.getRandomSubcategoryCourseFromdb();
+
+  sendResponse(res, {
+    message: "Random category course get successfully",
+    statusCode: httpStatus.OK,
+    data: courses,
+  });
+});
 
 //get single course
 const getSingleCourse = catchAsync(async (req, res) => {
@@ -190,4 +200,5 @@ export const courseController = {
   updateCourse,
   deleteCourse,
   getRandomCourse,
+  getRandomCategoryCourse,
 };

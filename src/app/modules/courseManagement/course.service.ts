@@ -5,6 +5,7 @@ import ApiError from "../../errorHandlers/ApiError";
 import { deleteFile, deleteMultipleFile } from "../../helper/deleteFile";
 import { AggregateQueryHelper } from "../../helper/query.helper";
 import { logger } from "../../utilities/logger";
+import { SubCategoryModel } from "../category/category.model";
 import { courseEngagementServices } from "../courseEngagement/courseEngagement.service";
 import { MulterFiles } from "./course.interface";
 import courseModel from "./course.model";
@@ -74,7 +75,7 @@ const getRandomCourseFromdb = async () => {
         courseData: 0,
         category: 0,
         subcategory: 0,
-        tag: 0,
+        tags: 0,
         level: 0,
         demoUrl: 0,
         benefits: 0,
@@ -88,6 +89,48 @@ const getRandomCourseFromdb = async () => {
 
   const courses = await courseModel.aggregate(aggregatePipeline);
   return courses;
+};
+
+const getRandomSubcategoryCourseFromdb = async () => {
+  const aggregatePipeline = [
+    { $sample: { size: 7 } },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        slug: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "_id",
+        foreignField: "subcategory",
+        as: "courses",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        slug: 1,
+        courses: {
+          _id: 1,
+          name: 1,
+          slug: 1,
+          price: 1,
+          estimatedPrice: 1,
+          thumbnail: 1,
+          reviews: 1,
+          rating: 1,
+        },
+      },
+    },
+  ];
+
+  const randomSubcategories =
+    await SubCategoryModel.aggregate(aggregatePipeline);
+  return randomSubcategories;
 };
 
 const getSingleCourseFromdb = async (slug: string) => {
@@ -197,4 +240,5 @@ export const courseServices = {
   updateCourseIntodb,
   deleteCourseFromdb,
   getRandomCourseFromdb,
+  getRandomSubcategoryCourseFromdb,
 };
