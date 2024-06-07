@@ -134,7 +134,35 @@ const getRandomSubcategoryCourseFromdb = async () => {
 };
 
 const getSingleCourseFromdb = async (slug: string) => {
-  const result = await courseModel.findOne({ slug });
+  const result = await courseModel
+    .findOne({ slug })
+    .select([
+      "-purchased",
+      "-subcategory",
+      "-category",
+      "-courseData.videoDescription",
+      "-courseData.videoUrl",
+      "-courseData.videoLength",
+      "-courseData.videoPlayer",
+      "-courseData.videoResource",
+      "-courseData.qustions",
+      "-courseData._id",
+    ])
+    .populate({
+      path: "instructor",
+      select: [
+        "-cartItems",
+        "-phone",
+        "-email",
+        "-role",
+        "-createdAt",
+        "-updatedAt",
+        "-fatherName",
+        "-motherName",
+        "-postCode",
+        "-district",
+      ],
+    });
 
   return result;
 };
