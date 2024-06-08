@@ -25,6 +25,7 @@ const createCourse = catchAsync(async (req, res) => {
     courseDuration,
     category,
     subcategory,
+    details,
   } = req.body as ICourse;
 
   const coursePayload: Record<string, unknown> = {
@@ -42,6 +43,7 @@ const createCourse = catchAsync(async (req, res) => {
     courseDuration,
     category,
     subcategory,
+    details,
   };
 
   coursePayload.slug = slugify(name);
@@ -144,6 +146,7 @@ const updateCourse = catchAsync(async (req, res) => {
     courseDuration,
     category,
     subcategory,
+    details,
   } = req.body as ICourse;
 
   const coursePayload: Record<string, unknown> = {
@@ -161,6 +164,7 @@ const updateCourse = catchAsync(async (req, res) => {
     courseDuration,
     category,
     subcategory,
+    details,
   };
 
   if (name) {
