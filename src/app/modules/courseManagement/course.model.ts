@@ -185,6 +185,7 @@ courseSchema.index(
     name: "text",
     description: "text",
     slug: "text",
+    tags: "text",
   },
   {
     weights: {

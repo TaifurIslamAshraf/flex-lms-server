@@ -17,14 +17,34 @@ const createCourseIntodb = async (coursePayload: Record<string, unknown>) => {
 };
 
 const getAllCourseFromdb = async (query: Record<string, unknown>) => {
-  //exclude spcific field
   const aggregatePipeline = [
+    {
+      $lookup: {
+        from: "users",
+        localField: "instructor",
+        foreignField: "_id",
+        as: "instructor",
+        pipeline: [
+          {
+            $project: {
+              _id: 0,
+              name: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: "$instructor",
+    },
     {
       $project: {
         courseData: 0,
+        description: 0,
+        details: 0,
         category: 0,
         subcategory: 0,
-        tag: 0,
+        tags: 0,
         level: 0,
         demoUrl: 0,
         benefits: 0,
