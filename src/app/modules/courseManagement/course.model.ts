@@ -145,14 +145,17 @@ const courseSchema = new Schema<ICourse>(
       type: String,
       required: true,
     },
-
+    details: {
+      type: [{ title: String }],
+      required: true,
+    },
     benefits: {
       type: [{ title: String }],
       required: true,
     },
     prerequistites: {
       type: [{ title: String }],
-      // required: true,
+      required: true,
     },
     courseDuration: {
       type: String,

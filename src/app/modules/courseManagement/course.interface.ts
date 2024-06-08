@@ -39,6 +39,7 @@ export type ICourse = {
   estimatedPrice?: number;
   thumbnail: string;
   tags: string;
+  details: [{ title: string }];
   level: "beginner" | "intermediate" | "expert";
   demoUrl: string;
   category: Types.ObjectId;

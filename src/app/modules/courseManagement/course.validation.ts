@@ -44,7 +44,13 @@ const createCourse = Joi.object({
   benefits: Joi.array()
     .items(Joi.object({ title: Joi.string().required() }))
     .required(),
-  prerequistites: Joi.array().items(Joi.object({ title: Joi.string() })),
+  prerequistites: Joi.array()
+    .items(Joi.object({ title: Joi.string() }))
+    .required(),
+  details: Joi.array()
+    .items(Joi.object({ title: Joi.string() }))
+    .required(),
+
   courseDuration: Joi.string().required(),
   reviews: Joi.array().items(reviewSchema),
   courseData: Joi.array().items(courseDataSchema),
