@@ -52,6 +52,8 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
         courseDuration: 0,
         materialIncludes: 0,
         purchased: 0,
+        createdAt: 0,
+        updatedAt: 0,
       },
     },
   ];

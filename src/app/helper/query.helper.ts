@@ -82,6 +82,7 @@ export class AggregateQueryHelper<T> {
     this.query = query;
     this.mongooseModel = mongooseModel;
   }
+
   search(): this {
     const search = this.query?.search;
     if (search) {
@@ -105,7 +106,10 @@ export class AggregateQueryHelper<T> {
     const category = this.query?.category;
 
     if (category) {
-      this.model.match({ category });
+      this.model = this.mongooseModel.aggregate([
+        { $match: { category } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     }
 
     return this;
@@ -115,7 +119,10 @@ export class AggregateQueryHelper<T> {
     const subcategory = this.query?.subcategory;
 
     if (subcategory) {
-      this.model.match({ subcategory });
+      this.model = this.mongooseModel.aggregate([
+        { $match: { subcategory } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     }
 
     return this;
@@ -125,11 +132,20 @@ export class AggregateQueryHelper<T> {
     const price = this.query?.price;
 
     if (price === "free") {
-      this.model.match({ price: 0 });
+      this.model = this.mongooseModel.aggregate([
+        { $match: { price: 0 } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     } else if (price === "paid") {
-      this.model.match({ price: { $gt: 0 } });
+      this.model = this.mongooseModel.aggregate([
+        { $match: { price: { $gt: 0 } } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     } else if (price === "offers") {
-      this.model.match({ estimatedPrice: { $gt: 0 } });
+      this.model = this.mongooseModel.aggregate([
+        { $match: { estimatedPrice: { $gt: 0 } } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     }
 
     return this;
@@ -139,17 +155,10 @@ export class AggregateQueryHelper<T> {
     const level = this.query?.level;
 
     if (level) {
-      this.model.match({ level });
-    }
-
-    return this;
-  }
-
-  filterByOrderStatus(): this {
-    const orderStatus = this.query?.orderStatus;
-
-    if (orderStatus) {
-      this.model.match({ orderStatus });
+      this.model = this.mongooseModel.aggregate([
+        { $match: { level } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
     }
 
     return this;
