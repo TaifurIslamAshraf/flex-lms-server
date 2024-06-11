@@ -20,4 +20,6 @@ cartRouter.put(
   cartControllers.removeFromCart
 );
 
+cartRouter.get("/cart-items", isAuthenticated, cartControllers.getAllCartItems);
+
 export default cartRouter;

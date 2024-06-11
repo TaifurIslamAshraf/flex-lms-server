@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
 import CourseEngagementModel from "../courseEngagement/courseEngagement.model";
+import courseModel from "../courseManagement/course.model";
 import UserModel from "../userManagement/user/user.model";
 
 const addToCartFromdb = async (userId: string, courseId: string) => {
@@ -48,4 +49,27 @@ const removeFromCartIntodb = async (userId: string, courseId: string) => {
   return updatedUser;
 };
 
-export const cartServices = { addToCartFromdb, removeFromCartIntodb };
+const getAllCartItemsFromdb = async (userId: string) => {
+  const user = await UserModel.findById(userId).exec();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const cartItemIds = user.cartItems;
+
+  const cartItems = await courseModel
+    .find({
+      _id: { $in: cartItemIds },
+    })
+    .select("_id thumbnail name price slug")
+    .exec();
+
+  return cartItems;
+};
+
+export const cartServices = {
+  addToCartFromdb,
+  removeFromCartIntodb,
+  getAllCartItemsFromdb,
+};

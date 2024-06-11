@@ -29,4 +29,16 @@ const removeFromCart = catchAsync(async (req, res) => {
   });
 });
 
-export const cartControllers = { addToCart, removeFromCart };
+const getAllCartItems = catchAsync(async (req, res) => {
+  const userId = res.locals?.user?._id;
+
+  const cartItems = await cartServices.getAllCartItemsFromdb(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "all cart course retrive",
+    data: cartItems,
+  });
+});
+
+export const cartControllers = { addToCart, removeFromCart, getAllCartItems };
