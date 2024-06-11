@@ -21,6 +21,7 @@ export default {
     access_token_cookie_expires: env.ACCESS_TOKEN_COOKIE_EXPIRES,
     refresh_token_cookie_expires: env.REFRESH_TOKEN_COOKIE_EXPIRES,
     forgotPasswordJwtSecret: env.FORTGOT_PASSWORD_SECRET,
+    next_auth_expires: env.NEXT_AUTH_EXPIRES,
   },
   smtp: {
     smtpMail: env.SMTP_MAIL,

@@ -5,15 +5,12 @@ import mongoose from "mongoose";
 import config from "../../../config/config";
 import ApiError from "../../../errorHandlers/ApiError";
 import { jwtHelper } from "../../../helper/jwt.helper";
+import { extractTokenFromHeader } from "../../../middlewares/authGuard";
 import catchAsync from "../../../utilities/catchAsync";
 import sendResponse from "../../../utilities/sendResponse";
 import { IUser } from "./auth.interface";
 import { authServices } from "./auth.service";
-import {
-  accessTokenCookieOptions,
-  refreshTokenCookieOptions,
-  sendToken,
-} from "./auth.utils";
+import { sendToken } from "./auth.utils";
 
 //register user
 const registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -58,7 +55,7 @@ const logout = catchAsync(async (req: Request, res: Response) => {
 
 //update access token
 const updateAccessToken = catchAsync(async (req: Request, res: Response) => {
-  const refresh_token = req.cookies.refresh_token as string;
+  const refresh_token = extractTokenFromHeader(req, "Refresh") as string;
 
   if (!refresh_token) {
     throw new ApiError(
@@ -101,12 +98,12 @@ const updateAccessToken = catchAsync(async (req: Request, res: Response) => {
   );
 
   res.locals.user = user;
-  res.cookie("access_token", accessToken, accessTokenCookieOptions);
-  res.cookie("refresh_token", refreshToken, refreshTokenCookieOptions);
+  // res.cookie("access_token", accessToken, accessTokenCookieOptions);
+  // res.cookie("refresh_token", refreshToken, refreshTokenCookieOptions);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    data: accessToken,
+    data: { accessToken, refreshToken },
   });
 });
 

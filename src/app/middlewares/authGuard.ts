@@ -8,19 +8,25 @@ import catchAsync from "../utilities/catchAsync";
 import { NextFunction, Request, Response } from "express";
 import { jwtHelper } from "../helper/jwt.helper";
 
+export const extractTokenFromHeader = (req: Request, tokenType: string) => {
+  const [type, token] = req.headers.authorization?.split(" ") ?? [];
+
+  return type === tokenType ? token : undefined;
+};
+
 export const isAuthenticated = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const refresh_token = req.cookies.refresh_token as string;
+    const access_token = extractTokenFromHeader(req, "Bearer") as string;
 
-    if (!refresh_token) {
+    if (!access_token) {
       throw new ApiError(
         httpStatus.UNAUTHORIZED,
         "Please login to access this recourse"
       );
     }
     const decoded = jwtHelper.verifyToken(
-      refresh_token,
-      config.token_data.refresh_token_secret!
+      access_token,
+      config.token_data.access_token_secret!
     ) as JwtPayload;
 
     if (!decoded) {

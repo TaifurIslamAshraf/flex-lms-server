@@ -32,8 +32,8 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   const accessToken = user.accessToken();
   const refreshToken = user.refreshToken();
 
-  res.cookie("access_token", accessToken, accessTokenCookieOptions);
-  res.cookie("refresh_token", refreshToken, refreshTokenCookieOptions);
+  // res.cookie("access_token", accessToken, accessTokenCookieOptions);
+  // res.cookie("refresh_token", refreshToken, refreshTokenCookieOptions);
 
   res.locals.user = user;
 
@@ -43,5 +43,8 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
     user,
     accessToken,
     refreshToken,
+    expireIn: new Date().setTime(
+      new Date().getTime() + parseInt(config.token_data.next_auth_expires!)
+    ),
   });
 };
