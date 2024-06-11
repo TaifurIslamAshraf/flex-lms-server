@@ -25,7 +25,7 @@ authRouter.post(
 
 authRouter.get("/logout", isAuthenticated, authControllers.logout);
 
-authRouter.get("/refresh", isAuthenticated, authControllers.updateAccessToken);
+authRouter.post("/refresh", authControllers.updateAccessToken);
 
 authRouter.put(
   "/update-password",

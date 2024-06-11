@@ -34,7 +34,7 @@ const bootstrap = async () => {
       `😴 Unhandled rejection happened. Exiting the process.`,
       error
     );
-   
+
     if (server) {
       server.close(() => {
         process.exit(1);
