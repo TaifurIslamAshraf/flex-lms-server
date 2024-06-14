@@ -6,7 +6,7 @@ import { orderServices } from "./order.service";
 
 //create order
 const createOrder = catchAsync(async (req, res) => {
-  const { accountNumber, accountType, items, transactionId } =
+  const { accountNumber, accountType, items, transactionId, phone } =
     req.body as IOrder;
 
   const userId = res.locals?.user?._id;
@@ -16,6 +16,7 @@ const createOrder = catchAsync(async (req, res) => {
     accountType,
     items,
     transactionId,
+    phone,
     user: res.locals.user?._id,
   };
 

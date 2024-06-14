@@ -164,6 +164,17 @@ export class AggregateQueryHelper<T> {
     return this;
   }
 
+  filterByOrderStatus(): this {
+    const orderStatus = this.query?.orderStatus;
+    if (orderStatus) {
+      this.model = this.mongooseModel.aggregate([
+        { $match: { orderStatus: { $in: orderStatus } } },
+        ...this.model.pipeline(),
+      ]) as Aggregate<T[]>;
+    }
+    return this;
+  }
+
   async metaData(): Promise<{
     totalPage: number;
     currentPage: number;

@@ -5,6 +5,7 @@ export type IOrder = {
   accountType: string;
   accountNumber: string;
   transactionId: string;
+  phone: string;
   orderStatus: "Approved" | "Pending" | "Rejected";
   orderedAt: Date;
   items: {
@@ -15,5 +16,5 @@ export type IOrder = {
 
 export type Order = Pick<
   IOrder,
-  "user" | "accountNumber" | "accountType" | "transactionId" | "items"
+  "user" | "accountNumber" | "accountType" | "transactionId" | "items" | "phone"
 >;

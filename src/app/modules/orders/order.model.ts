@@ -27,6 +27,11 @@ const orderSchema = new Schema<IOrder>({
     default: "Pending",
   },
 
+  phone: {
+    type: String,
+    required: true,
+  },
+
   orderedAt: {
     type: Date,
     default: Date.now,

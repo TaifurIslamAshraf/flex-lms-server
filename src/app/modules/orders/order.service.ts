@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
 import { AggregateQueryHelper } from "../../helper/query.helper";
+import { cartServices } from "../cart/cart.service";
 import { courseEngagementServices } from "../courseEngagement/courseEngagement.service";
 import { Order } from "./order.interface";
 import orderModel from "./order.model";
@@ -10,6 +11,7 @@ const createOrderIntodb = async (payload: Order, userId: string) => {
   await courseEngagementServices.isPurchasedCourses(userId, payload.items);
 
   const order = await orderModel.create(payload);
+  await cartServices.clearCartIntodb(userId);
 
   return order;
 };

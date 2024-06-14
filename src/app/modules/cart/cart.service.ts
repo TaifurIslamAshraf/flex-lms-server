@@ -68,8 +68,23 @@ const getAllCartItemsFromdb = async (userId: string) => {
   return cartItems;
 };
 
+const clearCartIntodb = async (userId: string) => {
+  if (!Types.ObjectId.isValid(userId)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid user id");
+  }
+
+  await UserModel.findByIdAndUpdate(
+    userId,
+    {
+      $set: { cartItems: [] },
+    },
+    { new: true, runValidators: true }
+  );
+};
+
 export const cartServices = {
   addToCartFromdb,
   removeFromCartIntodb,
   getAllCartItemsFromdb,
+  clearCartIntodb,
 };
