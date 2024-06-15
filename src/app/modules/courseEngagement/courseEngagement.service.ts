@@ -1,4 +1,5 @@
 import httpStatus from "http-status";
+import { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
 import courseModel from "../courseManagement/course.model";
 import {
@@ -35,9 +36,34 @@ const isPurchasedCourses = async (
 
 //user courses
 const getAllUserCoursesFromdb = async (userId: string) => {
-  const course = await CourseEngagementModel.find({ user: userId }).populate(
-    "course"
-  );
+  const pipeline = [
+    { $match: { user: new Types.ObjectId(userId) } },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "course",
+        foreignField: "_id",
+        as: "courseDetails",
+      },
+    },
+    {
+      $unwind: "$courseDetails",
+    },
+    {
+      $project: {
+        _id: 1,
+        title: "$courseDetails.name",
+        thumbnail: "$courseDetails.thumbnail",
+        slug: "$courseDetails.slug",
+        videoDataLength: { $size: "$courseDetails.courseData" },
+        completedVideoLength: { $size: "$videosCompleted" },
+        progress: 1,
+        completed: 1,
+      },
+    },
+  ];
+
+  const course = await CourseEngagementModel.aggregate(pipeline);
 
   return course;
 };

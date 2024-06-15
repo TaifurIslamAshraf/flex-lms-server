@@ -12,7 +12,7 @@ const allUserCourses = catchAsync(async (req, res) => {
   sendResponse(res, {
     message: "Your all course here",
     statusCode: httpStatus.OK,
-    data: result,
+    data: { result },
   });
 });
 

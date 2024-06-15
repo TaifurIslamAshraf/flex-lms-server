@@ -8,6 +8,12 @@ import { Order } from "./order.interface";
 import orderModel from "./order.model";
 
 const createOrderIntodb = async (payload: Order, userId: string) => {
+  const courseIds = payload.items.map((item) => item.course.toString());
+
+  //if course alredy order
+  await cartServices.isCourseAllredyOrder(userId, courseIds);
+
+  // if course alredy purchased
   await courseEngagementServices.isPurchasedCourses(userId, payload.items);
 
   const order = await orderModel.create(payload);
