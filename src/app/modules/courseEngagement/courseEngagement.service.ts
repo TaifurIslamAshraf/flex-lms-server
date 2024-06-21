@@ -52,6 +52,7 @@ const getAllUserCoursesFromdb = async (userId: string) => {
     {
       $project: {
         _id: 1,
+        courseId: "$courseDetails._id",
         title: "$courseDetails.name",
         thumbnail: "$courseDetails.thumbnail",
         slug: "$courseDetails.slug",

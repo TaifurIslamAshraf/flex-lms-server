@@ -190,8 +190,9 @@ courseSchema.index(
   {
     weights: {
       name: 5,
-      description: 4,
+      description: 2,
       slug: 5,
+      tags: 4,
     },
   }
 );

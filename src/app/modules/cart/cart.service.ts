@@ -11,9 +11,6 @@ const addToCartFromdb = async (userId: string, courseId: string) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid course id");
   }
 
-  //if course alredy orderd
-  await isCourseAllredyOrder(userId, [courseId]);
-
   const alreadyBought = await CourseEngagementModel.exists({
     course: courseId,
     user: userId,
@@ -22,6 +19,9 @@ const addToCartFromdb = async (userId: string, courseId: string) => {
   if (alreadyBought) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Course alredy purchesed");
   }
+
+  //if course alredy orderd
+  await isCourseAllredyOrder(userId, [courseId]);
 
   const updatedUser = await UserModel.findByIdAndUpdate(
     userId,
