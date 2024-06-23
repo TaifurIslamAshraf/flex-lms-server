@@ -103,6 +103,7 @@ const getRandomCourse = catchAsync(async (req, res) => {
     data: courses,
   });
 });
+
 //get random category course
 const getRandomCategoryCourse = catchAsync(async (req, res) => {
   const courses = await courseServices.getRandomSubcategoryCourseFromdb();
@@ -124,6 +125,17 @@ const getSingleCourse = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     message: "single course get was successfully",
     data: result,
+  });
+});
+
+//get best selling course
+const getBestSellingCourse = catchAsync(async (req, res) => {
+  const courses = await courseServices.getBestSellingCourseFromdb();
+
+  sendResponse(res, {
+    message: "best selling course get successfully",
+    statusCode: httpStatus.OK,
+    data: courses,
   });
 });
 
@@ -205,4 +217,5 @@ export const courseController = {
   deleteCourse,
   getRandomCourse,
   getRandomCategoryCourse,
+  getBestSellingCourse,
 };

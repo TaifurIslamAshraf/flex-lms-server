@@ -7,7 +7,7 @@ import { AggregateQueryHelper } from "../../helper/query.helper";
 import { logger } from "../../utilities/logger";
 import { SubCategoryModel } from "../category/category.model";
 import { courseEngagementServices } from "../courseEngagement/courseEngagement.service";
-import { MulterFiles } from "./course.interface";
+import { ICourse, MulterFiles } from "./course.interface";
 import courseModel from "./course.model";
 
 const createCourseIntodb = async (coursePayload: Record<string, unknown>) => {
@@ -283,6 +283,27 @@ const deleteCourseFromdb = async (courseId: string) => {
   await course.deleteOne();
 };
 
+const getBestSellingCourseFromdb = async (): Promise<ICourse[]> => {
+  const courses = await courseModel.aggregate([
+    {
+      $group: {
+        _id: "$_id",
+        name: { $first: "$name" },
+        thumbnail: { $first: "$thumbnail" },
+        totalPurchased: { $sum: "$purchased" },
+      },
+    },
+    {
+      $sort: { totalPurchased: -1 },
+    },
+    {
+      $limit: 3,
+    },
+  ]);
+
+  return courses;
+};
+
 export const courseServices = {
   createCourseIntodb,
   getAllCourseFromdb,
@@ -291,4 +312,5 @@ export const courseServices = {
   deleteCourseFromdb,
   getRandomCourseFromdb,
   getRandomSubcategoryCourseFromdb,
+  getBestSellingCourseFromdb,
 };

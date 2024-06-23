@@ -4,6 +4,7 @@ import ApiError from "../../errorHandlers/ApiError";
 import { AggregateQueryHelper } from "../../helper/query.helper";
 import { cartServices } from "../cart/cart.service";
 import { courseEngagementServices } from "../courseEngagement/courseEngagement.service";
+import courseModel from "../courseManagement/course.model";
 import { Order } from "./order.interface";
 import orderModel from "./order.model";
 
@@ -75,9 +76,24 @@ const updateOrderStatusFromdb = async (
     await courseEngagementServices.createCourseEngagementIntodb(
       courseEngagementPayload
     );
+
+    await updatePurchasedHistory(courseEngagementPayload?.course);
   }
 
   return order;
+};
+
+const updatePurchasedHistory = async (courseIds: Types.ObjectId[]) => {
+  const courses = await courseModel.find({
+    _id: { $in: courseIds },
+  });
+
+  await Promise.all(
+    courses?.map((course) => {
+      course.purchased = (course?.purchased || 0) + 1;
+      return course.save();
+    })
+  );
 };
 
 export const orderServices = {
@@ -85,4 +101,5 @@ export const orderServices = {
   getAllOrdersFromdb,
   getOrderById,
   updateOrderStatusFromdb,
+  updatePurchasedHistory,
 };

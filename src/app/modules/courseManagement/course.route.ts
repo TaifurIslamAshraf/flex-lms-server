@@ -34,6 +34,14 @@ courseRoutes.get(
   "/random-category-courses",
   courseController.getRandomCategoryCourse
 );
+
+courseRoutes.get(
+  "/best-selling",
+  isAuthenticated,
+  authorizeUser("admin"),
+  courseController.getBestSellingCourse
+);
+
 courseRoutes.get("/single-course/:slug", courseController.getSingleCourse);
 
 courseRoutes.delete(
