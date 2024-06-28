@@ -40,7 +40,7 @@ export type ICourse = {
   thumbnail: string;
   tags: string;
   details: [{ title: string }];
-  level: "beginner" | "intermediate" | "expert";
+  level: string;
   demoUrl: string;
   category: Types.ObjectId;
   subcategory: Types.ObjectId;

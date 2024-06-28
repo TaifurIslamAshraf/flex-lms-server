@@ -138,7 +138,6 @@ const courseSchema = new Schema<ICourse>(
     },
     level: {
       type: String,
-      enum: ["beginner", "intermediate", "expert"],
       required: true,
     },
     demoUrl: {

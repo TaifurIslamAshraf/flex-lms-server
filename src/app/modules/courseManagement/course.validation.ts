@@ -20,7 +20,7 @@ const courseDataSchema = Joi.object({
   videoPlayer: Joi.string().required(),
   videoResource: Joi.array().items(videoResourceSchema),
   contentDrip: Joi.boolean(),
-  qustions: Joi.array().items(commentSchema),
+  qustions: Joi.array().items(commentSchema).optional(),
 });
 
 const reviewSchema = Joi.object({
@@ -31,14 +31,16 @@ const reviewSchema = Joi.object({
 });
 
 const createCourse = Joi.object({
-  instructor: Joi.string().required(), // Assuming user ID is a string
   name: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().required(),
   estimatedPrice: Joi.number(),
 
   tags: Joi.string().required(),
-  level: Joi.string().valid("beginner", "intermediate", "expert").required(),
+  level: Joi.string()
+    .valid("beginner", "intermediate", "expert")
+    .insensitive()
+    .required(),
   demoUrl: Joi.string().required(),
 
   benefits: Joi.array()
@@ -49,7 +51,7 @@ const createCourse = Joi.object({
     .required(),
   details: Joi.array()
     .items(Joi.object({ title: Joi.string() }))
-    .required(),
+    .optional(),
 
   courseDuration: Joi.string().required(),
   reviews: Joi.array().items(reviewSchema),

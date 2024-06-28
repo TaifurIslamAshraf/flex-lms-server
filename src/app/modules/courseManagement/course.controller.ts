@@ -10,8 +10,9 @@ import { courseServices } from "./course.service";
 
 //create course
 const createCourse = catchAsync(async (req, res) => {
+  const userId = res.locals?.user?._id;
+
   const {
-    instructor,
     name,
     description,
     price,
@@ -29,7 +30,7 @@ const createCourse = catchAsync(async (req, res) => {
   } = req.body as ICourse;
 
   const coursePayload: Record<string, unknown> = {
-    instructor,
+    instructor: userId,
     name,
     description,
     price,
