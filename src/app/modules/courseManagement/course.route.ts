@@ -1,9 +1,7 @@
 import { Router } from "express";
 import { upload } from "../../config/multer.config";
 import { authorizeUser, isAuthenticated } from "../../middlewares/authGuard";
-import { validateRequestWithJoi } from "../../middlewares/validateRequest";
 import { courseController } from "./course.controller";
-import { courseValidationSchema } from "./course.validation";
 
 const courseRoutes = Router();
 
@@ -11,7 +9,7 @@ courseRoutes.post(
   "/create-course",
   isAuthenticated,
   authorizeUser("admin", "instructor"),
-  validateRequestWithJoi(courseValidationSchema.createCourse),
+  // validateRequestWithJoi(courseValidationSchema.createCourse),
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "materialIncludes", maxCount: 10 },
@@ -45,6 +43,12 @@ courseRoutes.get(
 );
 
 courseRoutes.get("/single-course/:slug", courseController.getSingleCourse);
+courseRoutes.get(
+  "/admin-single-course/:slug",
+  isAuthenticated,
+  authorizeUser("admin", "instructor"),
+  courseController.getSingleCourseForAdmin
+);
 
 courseRoutes.delete(
   "/delete-course/:id",

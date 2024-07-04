@@ -129,6 +129,22 @@ const getSingleCourse = catchAsync(async (req, res) => {
   });
 });
 
+//get single course for admin
+const getSingleCourseForAdmin = catchAsync(async (req, res) => {
+  const { slug } = req.params;
+
+  const result = await courseServices.getSingleCourseForAdminIntodb(slug);
+  if (!result) {
+    throw new ApiError(404, "Course Not found");
+  }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "single course get was successfully",
+    data: result,
+  });
+});
+
 //get best selling course
 const getBestSellingCourse = catchAsync(async (req, res) => {
   const courses = await courseServices.getBestSellingCourseFromdb();
@@ -219,4 +235,5 @@ export const courseController = {
   getRandomCourse,
   getRandomCategoryCourse,
   getBestSellingCourse,
+  getSingleCourseForAdmin,
 };

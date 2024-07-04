@@ -189,6 +189,12 @@ const getSingleCourseFromdb = async (slug: string) => {
   return result;
 };
 
+const getSingleCourseForAdminIntodb = async (slug: string) => {
+  const course = await courseModel.findOne({ slug });
+
+  return course;
+};
+
 const updateCourseIntodb = async (
   coursePayload: Record<string, unknown>,
   courseId: string,
@@ -212,17 +218,17 @@ const updateCourseIntodb = async (
     deleteMultipleFile(course?.materialIncludes);
   }
 
-  const nameisExitst = await courseModel
-    .findOne({ name: coursePayload?.name })
-    .exec();
-  if (nameisExitst) {
-    if (files.thumbnail) {
-      await deleteFile(files.thumbnail[0].path);
-    } else if (files.materialIncludes) {
-      await deleteMultipleFile(files.materialIncludes.map((file) => file.path));
-    }
-    throw new ApiError(httpStatus.BAD_REQUEST, "Course name should be unique");
-  }
+  // const nameisExitst = await courseModel
+  //   .findOne({ name: coursePayload?.name })
+  //   .exec();
+  // if (nameisExitst) {
+  //   if (files.thumbnail) {
+  //     await deleteFile(files.thumbnail[0].path);
+  //   } else if (files.materialIncludes) {
+  //     await deleteMultipleFile(files.materialIncludes.map((file) => file.path));
+  //   }
+  //   throw new ApiError(httpStatus.BAD_REQUEST, "Course name should be unique");
+  // }
 
   const updatedFields = Object.entries(coursePayload).reduce(
     (acc, [key, value]) => {
@@ -313,4 +319,5 @@ export const courseServices = {
   getRandomCourseFromdb,
   getRandomSubcategoryCourseFromdb,
   getBestSellingCourseFromdb,
+  getSingleCourseForAdminIntodb,
 };

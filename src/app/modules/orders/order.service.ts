@@ -34,7 +34,29 @@ const getAllOrdersFromdb = async (query: Record<string, unknown>) => {
 
   aggregateHelper.filterByOrderStatus().paginate();
 
-  const data = await aggregateHelper.model;
+  aggregatePipeline
+    .lookup({
+      from: "users",
+      localField: "user",
+      foreignField: "_id",
+      as: "userInfo",
+    })
+    .unwind({
+      path: "$userInfo",
+      preserveNullAndEmptyArrays: true,
+    })
+    .project({
+      _id: 1,
+      accountType: 1,
+      orderStatus: 1,
+      phone: 1,
+      items: 1,
+      orderedAt: 1,
+      "userInfo.name": 1,
+      "userInfo.email": 1,
+    });
+
+  const data = await aggregateHelper.model.exec();
   const meta = await aggregateHelper.metaData();
 
   return { data, meta };
@@ -45,7 +67,17 @@ const getOrderById = async (id: string) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Order id is invalid");
   }
 
-  const order = await orderModel.findById(id);
+  const order = await orderModel.findById(id).populate([
+    {
+      path: "items.course",
+      select: "name _id",
+    },
+    {
+      path: "user",
+      select: "name _id",
+    },
+  ]);
+
   if (!order) {
     throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
   }

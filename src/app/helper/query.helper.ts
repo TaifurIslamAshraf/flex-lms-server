@@ -168,7 +168,35 @@ export class AggregateQueryHelper<T> {
     const orderStatus = this.query?.orderStatus;
     if (orderStatus) {
       this.model = this.mongooseModel.aggregate([
-        { $match: { orderStatus: { $in: orderStatus } } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "userInfo",
+          },
+        },
+        { $unwind: { path: "$userInfo", preserveNullAndEmptyArrays: true } },
+        {
+          $match: {
+            orderStatus: {
+              $in: Array.isArray(orderStatus) ? orderStatus : [orderStatus],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            accountType: 1,
+            orderStatus: 1,
+            phone: 1,
+            items: 1,
+            orderedAt: 1,
+            "userInfo.name": 1,
+            "userInfo.email": 1,
+          },
+        },
+
         ...this.model.pipeline(),
       ]) as Aggregate<T[]>;
     }
