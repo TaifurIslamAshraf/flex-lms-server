@@ -6,6 +6,7 @@ import {
 } from "../modules/category/category.route";
 import courseEngagementRouter from "../modules/courseEngagement/courseEngagement.route";
 import courseRoutes from "../modules/courseManagement/course.route";
+import LayoutRouter from "../modules/layout/layout.route";
 import orderRouter from "../modules/orders/order.route";
 import authRouter from "../modules/userManagement/auth/auth.route";
 import userRouter from "../modules/userManagement/user/user.route";
@@ -44,6 +45,10 @@ const moduleRoutes = [
   {
     path: "/cart",
     route: cartRouter,
+  },
+  {
+    path: "/layout",
+    route: LayoutRouter,
   },
 ];
 

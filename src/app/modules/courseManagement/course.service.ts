@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import { merge } from "lodash";
 import mongoose, { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
-import { deleteFile, deleteMultipleFile } from "../../helper/deleteFile";
+import { deleteFile, deleteMultipleFiles } from "../../helper/deleteFile";
 import { AggregateQueryHelper } from "../../helper/query.helper";
 import { logger } from "../../utilities/logger";
 import { SubCategoryModel } from "../category/category.model";
@@ -207,7 +207,7 @@ const updateCourseIntodb = async (
 
   if (files.thumbnail) {
     coursePayload.thumbnail = files.thumbnail[0].path;
-    deleteFile(course?.thumbnail);
+    await deleteFile(course?.thumbnail);
   }
 
   if (files.materialIncludes) {
@@ -215,7 +215,7 @@ const updateCourseIntodb = async (
       (file) => file.path
     );
 
-    deleteMultipleFile(course?.materialIncludes);
+    await deleteMultipleFiles(course?.materialIncludes);
   }
 
   // const nameisExitst = await courseModel
@@ -279,7 +279,7 @@ const deleteCourseFromdb = async (courseId: string) => {
       await deleteFile(course.thumbnail);
     }
     if (course.materialIncludes && course.materialIncludes.length > 0) {
-      await deleteMultipleFile(course.materialIncludes);
+      await deleteMultipleFiles(course.materialIncludes);
     }
   } catch (error) {
     // Handle file deletion errors (optional)

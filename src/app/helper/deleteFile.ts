@@ -1,59 +1,43 @@
-import fs from "fs";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import fs from "fs/promises";
 import path from "path";
 import { logger } from "../utilities/logger";
 
 export const deleteFile = async (filePath: string) => {
-  if (filePath) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return new Promise((resolve, reject) => {
-      const imagePath = path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        filePath.replace(/\\/g, "/")
-      );
-      fs.unlink(imagePath, (err) => {
-        if (err) {
-          if (err.code === "ENOENT") {
-            logger.error("File not found");
-          } else {
-            logger.error(`Error Deleting file: ${filePath}`, err);
-          }
-        }
-      });
-      resolve({});
-    });
+  try {
+    await fs.unlink(filePath);
+    logger.info(`Successfully deleted file: ${filePath}`);
+  } catch (error) {
+    logger.error(`Error deleting file ${filePath}:`, error);
   }
 };
 
-export const deleteMultipleFile = async (filePaths: string[]) => {
-  if (filePaths.length > 0) {
-    const unlinkPromises: Promise<void>[] = [];
-
-    filePaths.map((file) => {
-      const unlinkPromise = new Promise<void>((resolve) => {
-        const filePath = path.join(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          file.replace(/\\/g, "/")
-        );
-        fs.unlink(filePath, (err) => {
-          if (err && err.code === "ENOENT") {
-            logger.error(`File not found ${file}`);
-          } else if (err) {
-            logger.error(err);
-          } else {
-            resolve();
-          }
-        });
-      });
-
-      unlinkPromises.push(unlinkPromise);
-    });
-
-    await Promise.all(unlinkPromises);
+export const deleteMultipleFiles = async (
+  filePaths: string[]
+): Promise<void> => {
+  if (filePaths.length === 0) {
+    return;
   }
+
+  const deletePromises = filePaths.map(async (file) => {
+    const filePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      file.replace(/\\/g, "/")
+    );
+
+    try {
+      await fs.unlink(filePath);
+    } catch (error: any) {
+      if (error.code === "ENOENT") {
+        logger.error(`File not found: ${file}`);
+      } else {
+        logger.error(`Error deleting file ${file}:`, error);
+      }
+    }
+  });
+
+  await Promise.all(deletePromises);
 };
