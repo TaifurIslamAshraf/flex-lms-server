@@ -26,11 +26,9 @@ const reviewSchema = new Schema<IReview>({
 const videoResource = new Schema<IVideoResource>({
   title: {
     type: String,
-    required: true,
   },
   url: {
     type: String,
-    required: true,
   },
 });
 

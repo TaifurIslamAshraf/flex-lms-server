@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import ApiError from "../../errorHandlers/ApiError";
-import { deleteFile } from "../../helper/deleteFile";
+import { deleteFile, deleteMultipleFiles } from "../../helper/deleteFile";
 import { slugify } from "../../helper/slugify";
 import catchAsync from "../../utilities/catchAsync";
 import sendResponse from "../../utilities/sendResponse";
@@ -68,7 +68,11 @@ const createCourse = catchAsync(async (req, res) => {
   const nameisExitst = await courseModel.findOne({ name });
   if (nameisExitst) {
     if (files.thumbnail) {
-      deleteFile(files.thumbnail[0].path);
+      await deleteFile(files.thumbnail[0].path);
+    } else if (files.materialIncludes) {
+      await deleteMultipleFiles(
+        files?.materialIncludes?.map((file) => file.path)
+      );
     }
     throw new ApiError(httpStatus.BAD_REQUEST, "Course name should be unique");
   }

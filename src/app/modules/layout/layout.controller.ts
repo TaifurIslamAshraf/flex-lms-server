@@ -1,17 +1,25 @@
 import httpStatus from "http-status";
+import ApiError from "../../errorHandlers/ApiError";
 import catchAsync from "../../utilities/catchAsync";
 import sendResponse from "../../utilities/sendResponse";
 import { ILayout } from "./layout.inteface";
 import { layoutServices } from "./layout.service";
 
 const createLayout = catchAsync(async (req, res) => {
-  const { title, description } = req.body as ILayout;
+  const { title, description } = req.body;
 
   const payload: ILayout = {
     title,
     description,
-    image: req.file?.path as string,
+    image: "",
   };
+
+  const file = req.file as Express.Multer.File;
+  if (!file) {
+    throw new ApiError(401, "Image is Required");
+  }
+
+  payload.image = file.path;
 
   const layout = await layoutServices.createLayoutIntodb(payload);
 
@@ -24,9 +32,7 @@ const createLayout = catchAsync(async (req, res) => {
 });
 
 const getLayouts = catchAsync(async (req, res) => {
-  const selected = (req.query?.selected as string) || undefined;
-
-  const layouts = await layoutServices.getLayoutFromdb(selected);
+  const layouts = await layoutServices.getLayoutFromdb();
 
   sendResponse(res, {
     data: layouts,

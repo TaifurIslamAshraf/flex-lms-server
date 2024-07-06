@@ -20,8 +20,8 @@ LayoutRouter.put(
   "/update-layout/:id",
   isAuthenticated,
   authorizeUser("admin"),
-  upload.single("image"),
   validateRequestWithJoi(updateLayoutSchema),
+  upload.single("image"),
   layoutController.updateLayout
 );
 
@@ -33,7 +33,7 @@ LayoutRouter.get(
 );
 
 LayoutRouter.delete(
-  "/delete-layout",
+  "/delete-layout/:id",
   isAuthenticated,
   authorizeUser("admin"),
   layoutController.deleteLayout
