@@ -72,11 +72,13 @@ const updateUserInfo = catchAsync(async (req, res) => {
 });
 
 const getAllUsers = catchAsync(async (req, res) => {
-  const result = await userService.getAllUserFromdb();
+  const query = req.query;
+
+  const result = await userService.getAllUserFromdb(query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     message: "All user here",
-    data: result,
+    data: { users: result?.data, meta: result?.meta },
   });
 });
 

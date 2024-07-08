@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import ApiError from "../../errorHandlers/ApiError";
 import { deleteFile } from "../../helper/deleteFile";
 import { ILayout } from "./layout.inteface";
@@ -22,7 +23,15 @@ const getLayoutFromdb = async (): Promise<ILayout[]> => {
 };
 
 const getLayoutById = async (id: string): Promise<ILayout> => {
-  const layout = await LayoutModel.findById(id);
+  const filter: Record<string, unknown> = {};
+
+  if (id === "selected") {
+    filter.selected = true;
+  } else if (Types.ObjectId.isValid(id)) {
+    filter._id = id;
+  }
+
+  const layout = await LayoutModel.findOne(filter);
   if (!layout) {
     throw new ApiError(404, "Layout Not Found");
   }

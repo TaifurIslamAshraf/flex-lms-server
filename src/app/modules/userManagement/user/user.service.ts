@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { merge } from "lodash";
 import ApiError from "../../../errorHandlers/ApiError";
 import { deleteFile } from "../../../helper/deleteFile";
+import { AggregateQueryHelper } from "../../../helper/query.helper";
 import { IUser } from "../auth/auth.interface";
 import { IUserUpdate } from "./user.interface";
 import UserModel from "./user.model";
@@ -64,21 +65,32 @@ const updateUserIntodb = async (payload: IUserUpdate, userId: string) => {
   return updatedUser;
 };
 
-const getAllUserFromdb = async () => {
-  const users = await UserModel.find().sort({ role: 1 });
-  const userLength = await UserModel.countDocuments();
-  if (!users) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Users not found");
-  }
+const getAllUserFromdb = async (query: Record<string, unknown>) => {
+  const aggregatePipeline = UserModel.aggregate();
 
-  const result = {
-    users,
-    userLength,
-  };
+  const aggregateHelper = new AggregateQueryHelper(
+    aggregatePipeline,
+    query,
+    UserModel
+  );
 
-  return result;
+  // Assuming you want to keep the sorting by role
+  aggregatePipeline.sort({ role: 1 });
+  aggregateHelper.paginate();
+  aggregatePipeline.project({
+    _id: 1,
+    name: 1,
+    email: 1,
+    phone: 1,
+    role: 1,
+    avatar: 1,
+  });
+
+  const data = await aggregateHelper.model.exec();
+  const meta = await aggregateHelper.metaData();
+
+  return { data, meta };
 };
-
 const userRoleService = async (userId: string, role: string) => {
   const user = await UserModel.findByIdAndUpdate(
     userId,

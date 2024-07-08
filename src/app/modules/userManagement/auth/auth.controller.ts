@@ -19,7 +19,7 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 
   const payload = {
     name,
-    email,
+    email: email.toLowerCase(),
     password,
     phone,
   };
@@ -37,7 +37,12 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const result = await authServices.loginService({ email, password });
+  const payload = {
+    email: email.toLowerCase(),
+    password,
+  };
+
+  const result = await authServices.loginService(payload);
 
   sendToken(result!, 200, res);
 });
