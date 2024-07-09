@@ -38,3 +38,8 @@ export const resetPasswordSchema = Joi.object({
   userId: Joi.string().required(),
   token: Joi.string().required(),
 });
+
+export const activateUserSchema = Joi.object({
+  activation_code: Joi.string().required(),
+  token: Joi.string().required(),
+});

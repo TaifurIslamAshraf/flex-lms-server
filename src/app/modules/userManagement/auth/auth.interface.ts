@@ -35,3 +35,8 @@ export type ILogin = {
   email: string;
   password: string;
 };
+
+export type IActivation = {
+  token: string;
+  activationCode: string;
+};

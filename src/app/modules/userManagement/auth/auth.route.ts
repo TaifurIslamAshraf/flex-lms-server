@@ -3,6 +3,7 @@ import { isAuthenticated } from "../../../middlewares/authGuard";
 import { validateRequestWithJoi } from "../../../middlewares/validateRequest";
 import { authControllers } from "./auth.controller";
 import {
+  activateUserSchema,
   loginSchema,
   resetPasswordSchema,
   updatePasswordSchema,
@@ -15,6 +16,12 @@ authRouter.post(
   "/register",
   validateRequestWithJoi(userSchema),
   authControllers.registerUser
+);
+
+authRouter.post(
+  "/activate",
+  validateRequestWithJoi(activateUserSchema),
+  authControllers.activateUser
 );
 
 authRouter.post(

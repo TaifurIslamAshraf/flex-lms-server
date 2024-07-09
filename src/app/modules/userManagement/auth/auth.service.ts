@@ -1,24 +1,56 @@
 import httpStatus from "http-status";
 import ApiError from "../../../errorHandlers/ApiError";
 import UserModel from "../user/user.model";
-import { ILogin, IUser, IUserSubset } from "./auth.interface";
+import { IActivation, ILogin, IUser, IUserSubset } from "./auth.interface";
 
 import ejs from "ejs";
 import path from "path";
 import config from "../../../config/config";
 import { jwtHelper } from "../../../helper/jwt.helper";
 import { sendMails } from "../../../helper/sendMail";
+import { logger } from "../../../utilities/logger";
 
-const createUserIntodb = async (payload: IUserSubset): Promise<IUser> => {
+const registerService = async (payload: IUserSubset): Promise<string> => {
   //is Email exist
   const user = await UserModel.exists({ email: payload.email });
   if (user) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User Alredy exist");
   }
 
-  const result = await UserModel.create(payload);
+  const { token, activationCode } = createActivationToken(payload);
 
-  return result;
+  const data = {
+    user: { name: payload.name },
+    activationCode: activationCode,
+  };
+
+  await ejs.renderFile(path.join(__dirname, "../../../views/mail.ejs"), data);
+  try {
+    await sendMails({
+      email: payload.email,
+      subject: "Activate your account",
+      templete: "mail.ejs",
+      data,
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+
+  return token;
+};
+
+export const activationUserService = async (
+  newUser: IUserSubset
+): Promise<IUser> => {
+  const isEmailExist = await UserModel.exists({ email: newUser?.email });
+
+  if (isEmailExist) {
+    throw new ApiError(400, "Email Alredy Exist");
+  }
+
+  const user = await UserModel.create(newUser);
+
+  return user;
 };
 
 //login service
@@ -133,8 +165,20 @@ const userFindById = async (id: string) => {
   return result;
 };
 
+export const createActivationToken = (user: IUserSubset): IActivation => {
+  const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
+  const token = jwtHelper.createToken(
+    { user, activationCode },
+    config.token_data.mailVarificationSecret,
+    "5m"
+  );
+
+  return { activationCode, token };
+};
+
 export const authServices = {
-  createUserIntodb,
+  registerService,
+  activationUserService,
   loginService,
   userFindById,
   updatePasswordService,

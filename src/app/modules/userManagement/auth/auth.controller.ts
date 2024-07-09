@@ -8,7 +8,7 @@ import { jwtHelper } from "../../../helper/jwt.helper";
 import { extractTokenFromHeader } from "../../../middlewares/authGuard";
 import catchAsync from "../../../utilities/catchAsync";
 import sendResponse from "../../../utilities/sendResponse";
-import { IUser } from "./auth.interface";
+import { IUser, IUserSubset } from "./auth.interface";
 import { authServices } from "./auth.service";
 import { sendToken } from "./auth.utils";
 
@@ -24,12 +24,36 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
     phone,
   };
 
-  const result = await authServices.createUserIntodb(payload);
+  const token = await authServices.registerService(payload);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: "user create successfully",
-    data: result,
+    message: `Please check your email: ${email} to activate your account`,
+    data: { activationToken: token },
+  });
+});
+
+//activate user
+const activateUser = catchAsync(async (req: Request, res: Response) => {
+  const { token, activation_code } = req.body;
+
+  //veryfy token and get user info
+  const newUser: { user: IUserSubset; activationCode: string } =
+    jwtHelper.verifyToken(token, config.token_data.mailVarificationSecret) as {
+      user: IUserSubset;
+      activationCode: string;
+    };
+
+  if (newUser.activationCode !== activation_code) {
+    throw new ApiError(400, "Invalid Activation Code.");
+  }
+
+  const user = await authServices.activationUserService(newUser.user);
+
+  res.status(200).json({
+    success: true,
+    message: "User Registration successfully",
+    user,
   });
 });
 
@@ -188,4 +212,5 @@ export const authControllers = {
   forgotPassword,
   forgotPasswordLinkValidation,
   resetPassword,
+  activateUser,
 };
