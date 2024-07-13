@@ -96,6 +96,11 @@ const updateOrderStatusFromdb = async (
   }
 
   order.orderStatus = orderStatus;
+  if (!order.deliveredAt) {
+    order.deliveredAt = new Date();
+  } else {
+    order.deliveredAt = new Date(Date.now());
+  }
 
   await order.save();
 

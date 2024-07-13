@@ -8,6 +8,7 @@ export type IOrder = {
   phone: string;
   orderStatus: "Approved" | "Pending" | "Rejected";
   orderedAt: Date;
+  deliveredAt: Date;
   items: {
     course: Types.ObjectId;
     price: number;

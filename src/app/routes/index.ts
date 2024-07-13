@@ -4,6 +4,7 @@ import {
   categoryRoute,
   subcategoryRoute,
 } from "../modules/category/category.route";
+import chartRoutes from "../modules/charts/chart.route";
 import courseEngagementRouter from "../modules/courseEngagement/courseEngagement.route";
 import courseRoutes from "../modules/courseManagement/course.route";
 import LayoutRouter from "../modules/layout/layout.route";
@@ -49,6 +50,10 @@ const moduleRoutes = [
   {
     path: "/layout",
     route: LayoutRouter,
+  },
+  {
+    path: "/chart",
+    route: chartRoutes,
   },
 ];
 
