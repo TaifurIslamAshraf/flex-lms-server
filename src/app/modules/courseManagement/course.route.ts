@@ -10,7 +10,7 @@ const courseRoutes = Router();
 courseRoutes.post(
   "/create-course",
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "instructor", "superAdmin"),
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "materialIncludes", maxCount: 10 },
@@ -23,7 +23,7 @@ courseRoutes.post(
 courseRoutes.put(
   "/update-course/:id",
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "instructor", "superAdmin"),
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "materialIncludes", maxCount: 10 },
@@ -41,7 +41,7 @@ courseRoutes.get(
 courseRoutes.get(
   "/best-selling",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   courseController.getBestSellingCourse
 );
 
@@ -49,14 +49,14 @@ courseRoutes.get("/single-course/:slug", courseController.getSingleCourse);
 courseRoutes.get(
   "/admin-single-course/:slug",
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "instructor", "superAdmin"),
   courseController.getSingleCourseForAdmin
 );
 
 courseRoutes.delete(
   "/delete-course/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("superAdmin"),
   courseController.deleteCourse
 );
 

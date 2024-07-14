@@ -16,21 +16,21 @@ orderRouter.post(
 orderRouter.get(
   "/all-orders",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   orderControllers.getAllOrders
 );
 
 orderRouter.get(
   "/single-order/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   orderControllers.getSingleOrders
 );
 
 orderRouter.put(
   "/update-order/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   validateRequestWithJoi(orderValidationSchema.updateOrderStatusSchema),
   orderControllers.updateOrderStatus
 );
@@ -38,7 +38,7 @@ orderRouter.put(
 orderRouter.delete(
   "/delete-order/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("superAdmin"),
   orderControllers.deleteOrder
 );
 

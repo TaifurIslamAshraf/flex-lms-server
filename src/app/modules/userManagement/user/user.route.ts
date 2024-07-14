@@ -3,14 +3,14 @@ import { upload } from "../../../config/multer.config";
 import { authorizeUser, isAuthenticated } from "../../../middlewares/authGuard";
 import { validateRequestWithJoi } from "../../../middlewares/validateRequest";
 import { userControllers } from "./user.controller";
-import { updateUserInfoSchema } from "./user.validation";
+import { roleUopdateSchema, updateUserInfoSchema } from "./user.validation";
 
 const userRouter = Router();
 
 userRouter.get(
   "/getAllUsers",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   userControllers.getAllUsers
 );
 
@@ -38,7 +38,8 @@ userRouter.put(
 userRouter.put(
   "/update-role",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("superAdmin"),
+  validateRequestWithJoi(roleUopdateSchema),
   userControllers.updateUserRole
 );
 

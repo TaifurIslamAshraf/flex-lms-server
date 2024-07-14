@@ -10,3 +10,8 @@ export type IUserUpdate = {
   district?: string;
   postCode?: string;
 };
+
+export type IRoleUopdate = {
+  userId: string;
+  role: "admin" | "user" | "instructor" | "superAdmin";
+};

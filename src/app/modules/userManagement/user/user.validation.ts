@@ -14,3 +14,8 @@ export const updateUserInfoSchema = Joi.object({
   district: Joi.string().optional(),
   postCode: Joi.string().optional(),
 });
+
+export const roleUopdateSchema = Joi.object({
+  id: Joi.string(),
+  role: Joi.string().valid("admin", "user", "instructor", "superAdmin"),
+});

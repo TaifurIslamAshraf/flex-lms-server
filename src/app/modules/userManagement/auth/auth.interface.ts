@@ -10,7 +10,7 @@ export type IUser = {
   phone: string;
   email: string;
   password: string;
-  role: "admin" | "user" | "instructor";
+  role: "admin" | "user" | "instructor" | "superAdmin";
   instructor?: Iinstructor;
   avatar?: string;
   address?: string;

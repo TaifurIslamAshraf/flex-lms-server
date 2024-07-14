@@ -72,7 +72,7 @@ const getOrderStatusFromdb = async () => {
   const orderStatus = await orderModel.aggregate([
     {
       $match: {
-        orderedAt: { $gte: startDate, $lte: endDate },
+        createdAt: { $gte: startDate, $lte: endDate },
       },
     },
     {

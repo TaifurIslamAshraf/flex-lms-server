@@ -10,7 +10,7 @@ const LayoutRouter = express.Router();
 LayoutRouter.post(
   "/create-layout",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   upload.single("image"),
   validateRequestWithJoi(createLayoutSchema),
   layoutController.createLayout
@@ -19,7 +19,7 @@ LayoutRouter.post(
 LayoutRouter.put(
   "/update-layout/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   validateRequestWithJoi(updateLayoutSchema),
   upload.single("image"),
   layoutController.updateLayout
@@ -28,14 +28,14 @@ LayoutRouter.put(
 LayoutRouter.get(
   "/all-layout",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("admin", "superAdmin"),
   layoutController.getLayouts
 );
 
 LayoutRouter.delete(
   "/delete-layout/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("superAdmin"),
   layoutController.deleteLayout
 );
 

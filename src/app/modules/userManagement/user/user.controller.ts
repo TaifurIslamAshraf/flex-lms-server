@@ -3,7 +3,7 @@ import ApiError from "../../../errorHandlers/ApiError";
 import catchAsync from "../../../utilities/catchAsync";
 import sendResponse from "../../../utilities/sendResponse";
 import { authServices } from "../auth/auth.service";
-import { IUserUpdate } from "./user.interface";
+import { IRoleUopdate, IUserUpdate } from "./user.interface";
 import { userService } from "./user.service";
 
 //get me
@@ -83,9 +83,9 @@ const getAllUsers = catchAsync(async (req, res) => {
 });
 
 const updateUserRole = catchAsync(async (req, res) => {
-  const { userId, role } = req.body;
+  const { userId, role } = req.body as IRoleUopdate;
 
-  const result = await userService.userRoleService(userId, role);
+  const result = await userService.userRoleService({ userId, role });
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

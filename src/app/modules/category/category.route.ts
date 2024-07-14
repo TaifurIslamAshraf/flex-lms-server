@@ -22,7 +22,7 @@ categoryRoute.post(
   "/create-category",
   validateRequestWithJoi(createCategorySchema),
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "instructor", "superAdmin"),
   categoryControllers.createCategory
 );
 categoryRoute.get("/get-all-category", categoryControllers.getAllCategory);
@@ -34,13 +34,13 @@ categoryRoute.put(
   "/update-category",
   validateRequestWithJoi(updateCategorySchema),
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "superAdmin"),
   categoryControllers.updateCategory
 );
 categoryRoute.delete(
   "/delete-category/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("superAdmin"),
   categoryControllers.deleteCategory
 );
 
@@ -51,7 +51,7 @@ subcategoryRoute.post(
   "/create-subcategory",
   validateRequestWithJoi(createSubCategorySchema),
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "instructor", "superAdmin"),
   categoryControllers.createSubcategory
 );
 subcategoryRoute.get(
@@ -70,12 +70,12 @@ subcategoryRoute.put(
   "/update-subcategory",
   validateRequestWithJoi(updateCategorySchema),
   isAuthenticated,
-  authorizeUser("admin", "instructor"),
+  authorizeUser("admin", "superAdmin"),
   categoryControllers.updateSubcategory
 );
 subcategoryRoute.delete(
   "/delete-subcategory/:id",
   isAuthenticated,
-  authorizeUser("admin"),
+  authorizeUser("superAdmin"),
   categoryControllers.deleteSubcategory
 );

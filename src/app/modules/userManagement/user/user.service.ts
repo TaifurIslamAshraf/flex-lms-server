@@ -4,7 +4,7 @@ import ApiError from "../../../errorHandlers/ApiError";
 import { deleteFile } from "../../../helper/deleteFile";
 import { AggregateQueryHelper } from "../../../helper/query.helper";
 import { IUser } from "../auth/auth.interface";
-import { IUserUpdate } from "./user.interface";
+import { IRoleUopdate, IUserUpdate } from "./user.interface";
 import UserModel from "./user.model";
 
 const updateUserAvatarIntodb = async (
@@ -91,15 +91,29 @@ const getAllUserFromdb = async (query: Record<string, unknown>) => {
 
   return { data, meta };
 };
-const userRoleService = async (userId: string, role: string) => {
-  const user = await UserModel.findByIdAndUpdate(
-    userId,
-    { role },
-    { new: true }
-  );
+
+const userRoleService = async ({ userId, role }: IRoleUopdate) => {
+  const user = await UserModel.findById(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
+
+  if (user?.role === "superAdmin") {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      "Super Admin role non-updatable"
+    );
+  }
+  if (role === "superAdmin") {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      "Only one Super Admin allowed."
+    );
+  }
+
+  user.role = role;
+
+  await user.save();
 
   return user;
 };
