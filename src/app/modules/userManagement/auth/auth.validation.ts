@@ -10,7 +10,7 @@ export const userSchema = Joi.object({
   phone: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
-  role: Joi.string().valid("admin", "user", "instructor").default("user"),
+
   instructor: Joi.when("role", {
     is: "instructor",
     then: instructorSchema.optional(),
