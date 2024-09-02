@@ -19,7 +19,7 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 
   const payload = {
     name,
-    email: email.toLowerCase(),
+    email,
     password,
     phone,
   };
@@ -161,7 +161,7 @@ const forgotPassword = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
   }
 
-  await authServices.forgotPasswordService(email);
+  await authServices.forgotPasswordService(email.toLowerCase());
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
