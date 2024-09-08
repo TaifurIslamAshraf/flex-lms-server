@@ -38,7 +38,7 @@ const createCourse = Joi.object({
 
   tags: Joi.string().required(),
   level: Joi.string()
-    .valid("beginner", "intermediate", "expert")
+    .valid("beginner", "intermediate", "expart")
     .insensitive()
     .required(),
   demoUrl: Joi.string().required(),

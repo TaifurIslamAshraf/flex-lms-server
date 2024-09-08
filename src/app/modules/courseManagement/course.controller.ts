@@ -108,6 +108,15 @@ const getRandomCourse = catchAsync(async (req, res) => {
     data: courses,
   });
 });
+const getFeaturedCourse = catchAsync(async (req, res) => {
+  const courses = await courseServices.getFeaturedCourseFromdb(req.query);
+
+  sendResponse(res, {
+    message: "Featured course get successfully",
+    statusCode: httpStatus.OK,
+    data: courses,
+  });
+});
 
 //get random category course
 const getRandomCategoryCourse = catchAsync(async (req, res) => {
@@ -240,4 +249,5 @@ export const courseController = {
   getRandomCategoryCourse,
   getBestSellingCourse,
   getSingleCourseForAdmin,
+  getFeaturedCourse,
 };

@@ -33,6 +33,7 @@ courseRoutes.put(
 
 courseRoutes.get("/all-courses", courseController.getAllCourse);
 courseRoutes.get("/random-courses", courseController.getRandomCourse);
+courseRoutes.get("/featured-courses", courseController.getFeaturedCourse);
 courseRoutes.get(
   "/random-category-courses",
   courseController.getRandomCategoryCourse

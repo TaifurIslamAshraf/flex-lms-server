@@ -87,6 +87,22 @@ const getAllCourseFromdb = async (query: Record<string, unknown>) => {
   return { data, meta };
 };
 
+const getFeaturedCourseFromdb = async (query: Record<string, unknown>) => {
+  const filter: Record<string, unknown> = {};
+  if (query?.category && query?.category !== "null") {
+    filter.category = query.category;
+  }
+
+  const featuredCourses = await courseModel
+    .find(filter)
+    .limit(3)
+    .select(
+      "-courseData -subcategory -tags -level -demoUrl -benefits -prerequistites -courseDuration -materialIncludes -purchased"
+    );
+
+  return featuredCourses;
+};
+
 const getRandomCourseFromdb = async () => {
   const aggregatePipeline = [
     {
@@ -320,4 +336,5 @@ export const courseServices = {
   getRandomSubcategoryCourseFromdb,
   getBestSellingCourseFromdb,
   getSingleCourseForAdminIntodb,
+  getFeaturedCourseFromdb,
 };

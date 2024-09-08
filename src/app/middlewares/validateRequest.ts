@@ -31,6 +31,7 @@ export const validateRequestWithJoi = (schema: AnySchema) => {
 
     if (error) {
       const errorMessage = error.details.map((datail) => datail.message);
+      imgDelete(req, next);
       return res.status(400).json({
         success: false,
         message: errorMessage,
